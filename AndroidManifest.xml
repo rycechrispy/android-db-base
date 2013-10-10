@@ -29,6 +29,9 @@
             android:name="Main"
             android:label="Learn2Crack USER PANEL" >
         </activity>
+        <activity
+            android:name="MainActivity">
+        </activity>
     </application>
     <!-- Allow to connect with internet and to know the current network state -->
     <uses-permission android:name="android.permission.INTERNET" />

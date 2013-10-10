@@ -205,6 +205,8 @@ public class Register extends Activity {
 						
 						Toast.makeText(getApplicationContext(),
 								"Successfully Registered.", Toast.LENGTH_SHORT).show();
+						//close the register activity
+						finish();
 					} else if (Integer.parseInt(red) == 2){
 						pDialog.dismiss();
 						Toast.makeText(getApplicationContext(),
