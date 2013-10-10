@@ -40,6 +40,7 @@ public class Main extends Activity {
 		 **/
 		btnLogout.setOnClickListener(new View.OnClickListener() {
 
+			@Override
 			public void onClick(View arg0) {
 
 				UserFunctions logout = new UserFunctions();

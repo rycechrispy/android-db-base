@@ -3,6 +3,8 @@
 
     <string name="app_name">Small</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="action_overflow">Overflow</string>
+    <string name="action_accept">Accept</string>
+    <string name="action_search">Search</string>
 
 </resources>

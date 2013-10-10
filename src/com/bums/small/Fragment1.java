@@ -33,7 +33,7 @@ public class Fragment1 extends Fragment {
 			//
 			try {
 				String value = getArguments().getString("key");
-				text.setText("Current Tab is: " + value);
+				text.setText("Current Tab is: " + value + "\n" + ((MainActivity) getActivity()).getUser().get("username"));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -47,6 +47,5 @@ public class Fragment1 extends Fragment {
 		// TODO Auto-generated method stub
 		super.onActivityCreated(savedInstanceState);
 	}
-	//
 
 }

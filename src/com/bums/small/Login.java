@@ -16,6 +16,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -51,6 +54,7 @@ public class Login extends Activity {
 		btnLogin = (Button) findViewById(R.id.login);
 
 		Btnregister.setOnClickListener(new View.OnClickListener() {
+			@Override
 			public void onClick(View view) {
 				Intent myIntent = new Intent(view.getContext(), Register.class);
 				startActivityForResult(myIntent, 0);
@@ -63,6 +67,7 @@ public class Login extends Activity {
 		 **/
 		btnLogin.setOnClickListener(new View.OnClickListener() {
 
+			@Override
 			public void onClick(View view) {
 
 				if (  ( !inputUsername.getText().toString().equals("")) && ( !inputPassword.getText().toString().equals("")) )
@@ -222,6 +227,5 @@ public class Login extends Activity {
 	}
 	
 	@Override
-	public void onBackPressed() {
-	}
+	public void onBackPressed() {}
 }
