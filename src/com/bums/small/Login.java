@@ -9,20 +9,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bums.library.DatabaseHandler;
@@ -34,7 +32,9 @@ public class Login extends Activity {
 	Button Btnregister;
 	EditText inputUsername;
 	EditText inputPassword;
-	private TextView loginErrorMsg;
+
+	private ProgressDialog nDialog;
+	private AlertDialog.Builder builder;
 	/**
 	 * Called when the activity is first created.
 	 */
@@ -93,6 +93,17 @@ public class Login extends Activity {
 		});
 	}
 
+	public void createAlertMessage(String title, String message) {
+		builder.setTitle(title);
+		builder.setMessage(message)
+		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.dismiss();
+			}
+		});
+		builder.create().show();
+	}
+
 
 	/**
 	 * Async Task to check whether internet connection is working.
@@ -100,14 +111,13 @@ public class Login extends Activity {
 
 	private class NetCheck extends AsyncTask<String,String,Boolean>
 	{
-		private ProgressDialog nDialog;
-
 		@Override
 		protected void onPreExecute(){
 			super.onPreExecute();
+			builder = new AlertDialog.Builder(Login.this);
 			nDialog = new ProgressDialog(Login.this);
 			nDialog.setTitle("Checking Network");
-			nDialog.setMessage("Loading..");
+			nDialog.setMessage("Loading...");
 			nDialog.setIndeterminate(false);
 			nDialog.setCancelable(true);
 			nDialog.show();
@@ -138,7 +148,7 @@ public class Login extends Activity {
 			}
 			return false;
 		}
-		
+
 		@Override
 		protected void onPostExecute(Boolean th){
 			if(th == true){
@@ -147,7 +157,9 @@ public class Login extends Activity {
 			}
 			else{
 				nDialog.dismiss();
-				loginErrorMsg.setText("Error in Network Connection");
+				Toast.makeText(getApplicationContext(),
+						"Network Error Connection", Toast.LENGTH_SHORT).show();
+				createAlertMessage("Network Error Connection", "There was no internet connection, please try again.");
 			}
 		}
 	}
@@ -156,29 +168,28 @@ public class Login extends Activity {
 	 * Async Task to get and send data to My Sql database through JSON respone.
 	 **/
 	private class ProcessLogin extends AsyncTask<String, String, JSONObject> {
-		private ProgressDialog pDialog;
-
-		String email,password;
+		String username, password;
 
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
 			inputUsername = (EditText) findViewById(R.id.username);
 			inputPassword = (EditText) findViewById(R.id.password);
-			email = inputUsername.getText().toString();
+			username = inputUsername.getText().toString();
 			password = inputPassword.getText().toString();
-			pDialog = new ProgressDialog(Login.this);
-			pDialog.setTitle("Contacting Servers");
-			pDialog.setMessage("Logging in ...");
-			pDialog.setIndeterminate(false);
-			pDialog.setCancelable(true);
-			pDialog.show();
+			builder = new AlertDialog.Builder(Login.this);
+			nDialog = new ProgressDialog(Login.this);
+			nDialog.setTitle("Contacting Servers");
+			nDialog.setMessage("Logging in...");
+			nDialog.setIndeterminate(false);
+			nDialog.setCancelable(true);
+			nDialog.show();
 		}
 
 		@Override
 		protected JSONObject doInBackground(String... args) {
 			UserFunctions userFunction = new UserFunctions();
-			JSONObject json = userFunction.loginUser(email, password);
+			JSONObject json = userFunction.loginUser(username, password);
 			return json;
 		}
 
@@ -190,8 +201,8 @@ public class Login extends Activity {
 					String res = json.getString(KEY_SUCCESS);
 
 					if(Integer.parseInt(res) == 1){
-						pDialog.setMessage("Loading User Space");
-						pDialog.setTitle("Getting Data");
+						nDialog.setMessage("Loading User Space");
+						nDialog.setTitle("Getting Data");
 						DatabaseHandler db = new DatabaseHandler(getApplicationContext());
 						JSONObject json_user = json.getJSONObject("user");
 						/**
@@ -205,16 +216,17 @@ public class Login extends Activity {
 						 **/
 						Intent upanel = new Intent(getApplicationContext(), MainActivity.class);
 						upanel.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-						pDialog.dismiss();
+						nDialog.dismiss();
 						startActivity(upanel);
 						/**
 						 * Close Login Screen
 						 **/
 						finish();
 					} else{
-						pDialog.dismiss();
+						nDialog.dismiss();
 						Toast.makeText(getApplicationContext(),
-								"Invalid Username/Password.", Toast.LENGTH_SHORT).show();
+								"Invalid Username or Password", Toast.LENGTH_SHORT).show();
+						createAlertMessage("Login Error", "Invalid username or password, please try again.");
 					}
 				}
 			} catch (JSONException e) {
@@ -225,7 +237,7 @@ public class Login extends Activity {
 	public void NetAsync(View view){
 		new NetCheck().execute();
 	}
-	
+
 	@Override
 	public void onBackPressed() {}
 }

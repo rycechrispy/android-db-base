@@ -7,11 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class Fragment1 extends Fragment {
+public class DetailsFragment extends Fragment {
 
 	private TextView text;
 
-	public Fragment1() {
+	public DetailsFragment() {
 		// TODO Auto-generated constructor stub
 
 	}

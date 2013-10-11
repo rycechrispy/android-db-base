@@ -10,7 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class AccountFragment extends Fragment1 {
+public class AccountFragment extends DetailsFragment {
 
 	private FragmentTabHost mTabHost;
 
@@ -41,12 +41,12 @@ public class AccountFragment extends Fragment1 {
 		Bundle b = new Bundle();
 		b.putString("key", "Details");
 		mTabHost.addTab(mTabHost.newTabSpec("details").setIndicator("Details"),
-				Fragment1.class, b);
+				DetailsFragment.class, b);
 		//
 		b = new Bundle();
 		b.putString("key", "Edit");
 		mTabHost.addTab(mTabHost.newTabSpec("edit")
-				.setIndicator("Edit"), Fragment1.class, b);
+				.setIndicator("Edit"), DetailsFragment.class, b);
 		return mTabHost;
 	}
 	

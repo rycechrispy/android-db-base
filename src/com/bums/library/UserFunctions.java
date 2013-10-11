@@ -2,9 +2,11 @@ package com.bums.library;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
+
 import android.content.Context;
 
 
@@ -18,10 +20,12 @@ public class UserFunctions {
     
     private static String loginURL = "http://192.168.1.110:80/small/";
     private static String registerURL = "http://192.168.1.110:80/small/";
+    private static String fashionURL = "https://api.instagram.com/v1/tags/incfashion/media/recent?client_id=a817372926af4107bb256a2036c6015d";
 
 
     private static String login_tag = "login";
     private static String register_tag = "register";
+    private static String fashion_tag = "fashion";
 
 
     // constructor
@@ -66,5 +70,15 @@ public class UserFunctions {
         db.resetTables();
         return true;
     }
+    
+    /**
+	 * Retrieves recent post data from the server.
+	 */
+	public JSONObject getFashionJSON() {
+		JSONParser jParser = new JSONParser();
+		JSONObject json = jParser.getJSONFromUrl(fashionURL);
+
+		return json;
+	}
 }
 

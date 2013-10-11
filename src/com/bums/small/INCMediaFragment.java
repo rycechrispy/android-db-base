@@ -20,7 +20,6 @@ import android.widget.ProgressBar;
 public class INCMediaFragment extends Fragment {
 	private WebView webView;
 	private View v;
-	private ProgressDialog mDialog;
 	private Bundle webViewBundle;
 	private ProgressBar bar;
 	private String lastURL = "";
@@ -41,20 +40,7 @@ public class INCMediaFragment extends Fragment {
 		//View v = inflater.inflate(R.layout.webview, container, false);
 		v = LayoutInflater.from(getActivity()).inflate(R.layout.webview, null);
 		if (getArguments() != null) {
-			//
 			try {
-				//mDialog = ProgressDialog.show(getActivity(), "", "Loading...",
-				//		true);
-				//mDialog.setCancelable(true);
-				
-//				webView.setWebChromeClient(new WebChromeClient() {
-//	                public void onProgressChanged(WebView view, int progress) {
-//	                    if (progress == 100) {
-//	                        // stop ProgressDialog after loading
-//	                        mDialog.dismiss();
-//	                    }
-//	                }
-//	            });
 				bar = (ProgressBar) v.findViewById(R.id.progressBar);
 				bar.setVisibility(View.VISIBLE);
 
@@ -141,12 +127,6 @@ public class INCMediaFragment extends Fragment {
 		@Override
 		public void onPageStarted(WebView view, String url,
                 Bitmap favicon) {
-//			if (!mDialog.isShowing()) {
-//				mDialog = ProgressDialog.show(getActivity(), "", "Loading...",
-//						true);
-//				mDialog.setCancelable(true);
-//			}
-			
 			bar = (ProgressBar) v.findViewById(R.id.progressBar);
 			bar.setVisibility(View.VISIBLE);
 
@@ -157,22 +137,6 @@ public class INCMediaFragment extends Fragment {
 
 		@Override
 		public void onPageFinished(WebView view, String url) {
-//			if (mDialog != null && mDialog.isShowing()) {
-//				new java.util.Timer().schedule( 
-//					new java.util.TimerTask() {
-//						@Override
-//						public void run() {
-//							mDialog.dismiss();
-//						}
-//					}, 
-//					3000 
-//					);
-//			}
-			
-//			if (mDialog != null && mDialog.isShowing()) {
-//				mDialog.dismiss();
-//			}
-			
 			bar = (ProgressBar) v.findViewById(R.id.progressBar);
 			bar.setVisibility(View.INVISIBLE);
 		}

@@ -9,8 +9,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -40,6 +42,9 @@ public class Register extends Activity {
 	EditText inputUsername;
 	EditText inputPassword;
 	Button btnRegister;
+	
+	private ProgressDialog nDialog;
+	private AlertDialog.Builder builder;
 
 	/**
 	 * Called when the activity is first created.
@@ -91,17 +96,32 @@ public class Register extends Activity {
 			}
 		});
 	}
+	
+	public void createAlertMessage(final String title, String message) {
+		builder.setTitle(title);
+		builder.setMessage(message)
+		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.dismiss();
+				if (title.equals("Success")) {
+					finish();
+				}
+			}
+		});
+		builder.create().show();
+	}
+	
+	
 	/**
 	 * Async Task to check whether internet connection is working
 	 **/
-
 	private class NetCheck extends AsyncTask<String,String,Boolean> {
-		private ProgressDialog nDialog;
 
 		@Override
 		protected void onPreExecute(){
 			super.onPreExecute();
 			nDialog = new ProgressDialog(Register.this);
+			builder = new AlertDialog.Builder(Register.this);
 			nDialog.setMessage("Loading..");
 			nDialog.setTitle("Checking Network");
 			nDialog.setIndeterminate(false);
@@ -144,17 +164,13 @@ public class Register extends Activity {
 			} else{
 				nDialog.dismiss();
 				Toast.makeText(getApplicationContext(),
-						"Network Error Connection.", Toast.LENGTH_SHORT).show();
+						"Network Error Connection", Toast.LENGTH_SHORT).show();
+				createAlertMessage("Network Error Connection", "There was no internet connection, please try again.");
 			}
 		}
 	}
 	
 	private class ProcessRegister extends AsyncTask<String, String, JSONObject> {
-		/**
-		 * Defining Process dialog
-		 **/
-		private ProgressDialog pDialog;
-
 		String username, password;
 		@Override
 		protected void onPreExecute() {
@@ -163,12 +179,13 @@ public class Register extends Activity {
 			inputPassword = (EditText) findViewById(R.id.password);
 			username = inputUsername.getText().toString();
 			password = inputPassword.getText().toString();
-			pDialog = new ProgressDialog(Register.this);
-			pDialog.setTitle("Contacting Servers");
-			pDialog.setMessage("Registering ...");
-			pDialog.setIndeterminate(false);
-			pDialog.setCancelable(true);
-			pDialog.show();
+			nDialog = new ProgressDialog(Register.this);
+			builder = new AlertDialog.Builder(Register.this);
+			nDialog.setTitle("Contacting Servers");
+			nDialog.setMessage("Registering...");
+			nDialog.setIndeterminate(false);
+			nDialog.setCancelable(true);
+			nDialog.show();
 		}
 
 		@Override
@@ -189,8 +206,8 @@ public class Register extends Activity {
 					String red = json.getString(KEY_ERROR);
 
 					if(Integer.parseInt(res) == 1) {
-//						pDialog.setTitle("Getting Data");
-//						pDialog.setMessage("Loading Info");
+						nDialog.setTitle("Getting Data");
+						nDialog.setMessage("Loading Info");
 						DatabaseHandler db = new DatabaseHandler(getApplicationContext());
 						JSONObject json_user = json.getJSONObject("user");
 
@@ -202,25 +219,28 @@ public class Register extends Activity {
 						logout.logoutUser(getApplicationContext());
 						db.addUser(json_user.getString(KEY_ID),json_user.getString(KEY_USERNAME));
 						
-						pDialog.dismiss();
+						nDialog.dismiss();
+						
+						createAlertMessage("Success", "You have successfully registered.");
 						
 						Toast.makeText(getApplicationContext(),
 								"Successfully Registered.", Toast.LENGTH_SHORT).show();
 						//close the register activity
-						finish();
+						
 					} else if (Integer.parseInt(red) == 2){
-						pDialog.dismiss();
+						nDialog.dismiss();
 						Toast.makeText(getApplicationContext(),
 								"User already exists!", Toast.LENGTH_SHORT).show();
 					} else if (Integer.parseInt(red) == 3){
-						pDialog.dismiss();
+						nDialog.dismiss();
 						Toast.makeText(getApplicationContext(),
 								"Invalid username!", Toast.LENGTH_SHORT).show();
 					}
-				} else{
-					pDialog.dismiss();
+				} else {
+					nDialog.dismiss();
 					Toast.makeText(getApplicationContext(),
-							"Error occured in registration.", Toast.LENGTH_SHORT).show();
+							"Error occurred in registration", Toast.LENGTH_SHORT).show();
+					createAlertMessage("Application Error", "There was an error that occurred in the registration process.");
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();

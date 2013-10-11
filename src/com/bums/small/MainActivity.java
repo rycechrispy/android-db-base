@@ -18,21 +18,21 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		DatabaseHandler db = new DatabaseHandler(getApplicationContext());
 		user = new HashMap<String, String>();
 		user = db.getUserDetails();
-		
+
 		setContentView(R.layout.bottom_tabs);
 
 		mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
 		mTabHost.setup(this, getSupportFragmentManager(), R.id.realtabcontent);
 
 		Bundle b = new Bundle();
-		//		b.putString("key", "Feed");
-		//		mTabHost.addTab(mTabHost.newTabSpec("feed").setIndicator("feed"),
-		//				Fragment1.class, b);
-		//
+		b.putString("key", "Fashion");
+		mTabHost.addTab(mTabHost.newTabSpec("fashion").setIndicator("fashion"),
+				FashionFragment.class, b);
+
 		b = new Bundle();
 		b.putString("key", "Events");
 		mTabHost.addTab(mTabHost.newTabSpec("events")
@@ -48,7 +48,7 @@ public class MainActivity extends FragmentActivity {
 		mTabHost.addTab(mTabHost.newTabSpec("account").setIndicator("account"),
 				AccountFragment.class, b);
 	}
-	
+
 	public HashMap<String,String> getUser() {
 		return user;
 	}
