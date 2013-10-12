@@ -33,7 +33,7 @@ public class FashionFragment extends ListFragment {
 	 */
 	private static String KEY_SUCCESS = "success";
 	private static String KEY_ID = "id";
-	
+
 	private static String KEY_DATA = "data";
 	private static String KEY_IMAGES = "images";
 	private static String KEY_STANDARD = "standard_resolution";
@@ -43,7 +43,7 @@ public class FashionFragment extends ListFragment {
 	private static String KEY_USERNAME = "username";
 	private static String KEY_NAME = "full_name";
 	private static String KEY_URL = "url";
-	
+
 	private ProgressBar bar;
 
 	// An array of all of our comments
@@ -51,6 +51,9 @@ public class FashionFragment extends ListFragment {
 	// manages all of our comments in a list.
 	private ArrayList<HashMap<String, String>> iDataList;
 	private View v;
+
+	private ArrayList<String> images;
+	private boolean flag = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -61,39 +64,32 @@ public class FashionFragment extends ListFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		
 		v = super.onCreateView(inflater, container, savedInstanceState);
-		
-//		bar = (ProgressBar) v.findViewById(R.id.progressBar);
-//		bar.setVisibility(View.VISIBLE);
-		
-		String[] countries = new String[] {
-		        "India",
-		        "Pakistan",
-		        "Sri Lanka",
-		        "China",
-		        "Bangladesh",
-		        "Nepal",
-		        "Afghanistan",
-		        "North Korea",
-		        "South Korea",
-		        "Japan"
-		    };
-		/** Creating an array adapter to store the list of countries **/
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(inflater.getContext(), android.R.layout.simple_list_item_1,countries);
- 
-        /** Setting the list adapter for the ListFragment */
-        setListAdapter(adapter);
-        
-        NetAsync(v);
- 
-        return v;
+
+		//		bar = (ProgressBar) v.findViewById(R.id.progressBar);
+		//		bar.setVisibility(View.VISIBLE);
+		if (flag) {
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(inflater.getContext(), android.R.layout.simple_list_item_1, images);
+			setListAdapter(adapter);
+		} else {
+			images = new ArrayList<String>();
+			flag = true;
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(inflater.getContext(), android.R.layout.simple_list_item_1,images);
+			setListAdapter(adapter);
+		}
+
+		NetAsync(v);
+
+		return v;
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onActivityCreated(savedInstanceState);
+	   super.onActivityCreated(savedInstanceState);
+	   if (flag) {
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, images);
+			setListAdapter(adapter);
+		}
 	}
 
 	/**
@@ -104,8 +100,8 @@ public class FashionFragment extends ListFragment {
 		@Override
 		protected void onPreExecute(){
 			super.onPreExecute();
-//			bar = (ProgressBar) v.findViewById(R.id.progressBar);
-//			bar.setVisibility(View.VISIBLE);
+			//			bar = (ProgressBar) v.findViewById(R.id.progressBar);
+			//			bar.setVisibility(View.VISIBLE);
 		}
 		/**
 		 * Gets current device state and checks for working internet connection by trying Google.
@@ -159,13 +155,13 @@ public class FashionFragment extends ListFragment {
 				JSONObject images = data.getJSONObject(KEY_IMAGES);
 				JSONObject standard = images.getJSONObject(KEY_STANDARD);
 				String url = standard.getString(KEY_URL);
-				
+
 				JSONObject caption = data.getJSONObject(KEY_CAPTION);
 				String text = caption.getString(KEY_TEXT);
-				
+
 				JSONObject user = data.getJSONObject(KEY_USER);
 				String username = user.getString(KEY_USERNAME);
-				
+
 				// creating new HashMap
 				HashMap<String, String> map = new HashMap<String, String>();
 
@@ -181,6 +177,13 @@ public class FashionFragment extends ListFragment {
 			e.printStackTrace();
 		}
 	}
+	
+	public ArrayList<String> getURLs(ArrayList<HashMap<String, String>> data) {
+		for (int i = 0; i < data.size(); i++) {
+			images.add(iDataList.get(i).get(KEY_URL));
+		}
+		return images;
+	}
 
 	/**
 	 * Async Task to get and send data to My Sql database through JSON respone.
@@ -191,42 +194,33 @@ public class FashionFragment extends ListFragment {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-//			bar = (ProgressBar) v.findViewById(R.id.progressBar);
-//			bar.setVisibility(View.VISIBLE);
+			//			bar = (ProgressBar) v.findViewById(R.id.progressBar);
+			//			bar.setVisibility(View.VISIBLE);
 		}
 
 		@Override
 		protected JSONObject doInBackground(String... args) {
 			UserFunctions userFunction = new UserFunctions();
 			JSONObject json = userFunction.getFashionJSON();
-			
+
 			updateJSONdata(json);
-			
+
 			return json;
 		}
 
 		@Override
 		protected void onPostExecute(JSONObject json) {
 			try {
-				if (json.getString(KEY_SUCCESS) != null) {
-//					bar = (ProgressBar) v.findViewById(R.id.progressBar);
-//					bar.setVisibility(View.INVISIBLE);
+					//					bar = (ProgressBar) v.findViewById(R.id.progressBar);
+					//					bar.setVisibility(View.INVISIBLE);
 
-					String res = json.getString(KEY_SUCCESS);
-
-					if(Integer.parseInt(res) == 1){
-						DatabaseHandler db = new DatabaseHandler(getActivity().getApplicationContext());
-						JSONObject json_user = json.getJSONObject("user");
-
-
-					} else{
-//						bar = (ProgressBar) v.findViewById(R.id.progressBar);
-//						bar.setVisibility(View.INVISIBLE);
-						Toast.makeText(getActivity().getApplicationContext(),
-								"JSON FAILED", Toast.LENGTH_SHORT).show();
-					}
-				}
-			} catch (JSONException e) {
+						images = getURLs(iDataList);
+						ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, images);
+						setListAdapter(adapter);
+				
+			} catch (Exception e) {
+				Toast.makeText(getActivity().getApplicationContext(),
+						"JSON FAILED", Toast.LENGTH_SHORT).show();
 				e.printStackTrace();
 			}
 		}

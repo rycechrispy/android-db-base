@@ -18,8 +18,11 @@ public class UserFunctions {
 //    private static String loginURL = "http://10.0.2.2/small/";
 //    private static String registerURL = "http://10.0.2.2/small/";
     
-    private static String loginURL = "http://192.168.1.110:80/small/";
-    private static String registerURL = "http://192.168.1.110:80/small/";
+    private static String loginURL = "http://192.168.1.141:80/small/";
+    private static String registerURL = "http://192.168.1.141:80/small/";
+    
+    //private static String loginURL = "http://192.168.1.110:80/small/";
+    //private static String registerURL = "http://192.168.1.110:80/small/";
     private static String fashionURL = "https://api.instagram.com/v1/tags/incfashion/media/recent?client_id=a817372926af4107bb256a2036c6015d";
 
 

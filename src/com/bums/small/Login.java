@@ -70,7 +70,7 @@ public class Login extends Activity {
 			@Override
 			public void onClick(View view) {
 
-				if (  ( !inputUsername.getText().toString().equals("")) && ( !inputPassword.getText().toString().equals("")) )
+				if ( ( !inputUsername.getText().toString().equals("")) && ( !inputPassword.getText().toString().equals("")) )
 				{
 					NetAsync(view);
 				}
