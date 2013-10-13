@@ -45,6 +45,11 @@ public class Login extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		//if shared preferences has stuff in it (eg not null) then start, else wait for user login details
+		//NetAsync(view)
+		
+		//else {
 
 		setContentView(R.layout.login);
 
@@ -70,7 +75,7 @@ public class Login extends Activity {
 			@Override
 			public void onClick(View view) {
 
-				if ( ( !inputUsername.getText().toString().equals("")) && ( !inputPassword.getText().toString().equals("")) )
+				if (  ( !inputUsername.getText().toString().equals("")) && ( !inputPassword.getText().toString().equals("")) )
 				{
 					NetAsync(view);
 				}
