@@ -63,6 +63,7 @@ public class FashionFragment extends ListFragment {
 
 	private RowData rd;
 	private RowAdapter adapter;
+	private String next_url;
 	private static ImageLoader mImageLoader;
 	private static View view;
 
@@ -164,7 +165,7 @@ public class FashionFragment extends ListFragment {
 		rowDataList = new ArrayList<RowData>();
 		try {
 			rData = json.getJSONArray(KEY_DATA);
-
+			next_url = json.getJSONObject("pagination").getString("next_url");
 			for (int i = 0; i < rData.length(); i++) {
 				JSONObject data = rData.getJSONObject(i);
 
@@ -239,6 +240,43 @@ public class FashionFragment extends ListFragment {
 				//					adapter.notifyDataSetChanged();
 				//				}
 				//set the bitmaps
+
+			} catch (Exception e) {
+				Toast.makeText(getActivity().getApplicationContext(),
+						"JSON FAILED", Toast.LENGTH_SHORT).show();
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/**
+	 * Async Task to get and send data to My Sql database through JSON respone.
+	 **/
+	private class LoadNextJSON extends AsyncTask<String, String, JSONObject> {
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			bar = (ProgressBar) v.findViewById(R.id.progressBar);
+			bar.setVisibility(View.VISIBLE);
+		}
+
+		@Override
+		protected JSONObject doInBackground(String... args) {
+			UserFunctions userFunction = new UserFunctions();
+			JSONObject json = userFunction.getFashionJSON(next_url);
+
+			updateJSONdata(json);
+
+			return json;
+		}
+
+		@Override
+		protected void onPostExecute(JSONObject json) {
+			try {
+				bar = (ProgressBar) v.findViewById(R.id.progressBar);
+				bar.setVisibility(View.INVISIBLE);
+				adapter = new RowAdapter(getActivity(), R.layout.list_itm, rowDataList);
+				setListAdapter(adapter);
 
 			} catch (Exception e) {
 				Toast.makeText(getActivity().getApplicationContext(),
@@ -333,6 +371,9 @@ public class FashionFragment extends ListFragment {
 		switch (item.getItemId()) {
 		case R.id.action_refresh:
 			new LoadJSON().execute();
+			return true;
+		case R.id.action_forward:
+			new LoadNextJSON().execute();
 			return true;
 		default:
 			break;

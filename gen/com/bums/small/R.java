@@ -26,24 +26,26 @@ public final class R {
         public static final int ic_action_overflow=0x7f020002;
         public static final int ic_action_refresh=0x7f020003;
         public static final int ic_action_search=0x7f020004;
-        public static final int ic_home=0x7f020005;
-        public static final int ic_launcher=0x7f020006;
-        public static final int ic_menu_home=0x7f020007;
-        public static final int progress=0x7f020008;
+        public static final int ic_forward=0x7f020005;
+        public static final int ic_home=0x7f020006;
+        public static final int ic_launcher=0x7f020007;
+        public static final int ic_menu_home=0x7f020008;
+        public static final int progress=0x7f020009;
     }
     public static final class id {
         public static final int TextView01=0x7f080008;
-        public static final int action_back=0x7f080013;
+        public static final int action_back=0x7f080014;
+        public static final int action_forward=0x7f080011;
         public static final int action_overflow=0x7f080010;
-        public static final int action_refresh=0x7f080011;
+        public static final int action_refresh=0x7f080012;
         public static final int bktologin=0x7f08000e;
         public static final int header=0x7f080004;
-        public static final int home=0x7f080014;
+        public static final int home=0x7f080015;
         public static final int imageView=0x7f080003;
         public static final int imageView1=0x7f080005;
         public static final int login=0x7f08000a;
         public static final int logout=0x7f08000d;
-        public static final int menu_settings=0x7f080012;
+        public static final int menu_settings=0x7f080013;
         public static final int password=0x7f080009;
         public static final int progressBar=0x7f080002;
         public static final int realtabcontent=0x7f080000;
@@ -78,6 +80,7 @@ public final class R {
         public static final int action_search=0x7f050004;
         public static final int action_settings=0x7f050001;
         public static final int app_name=0x7f050000;
+        public static final int ic_forward=0x7f050008;
         public static final int menu_home=0x7f050007;
     }
     public static final class style {

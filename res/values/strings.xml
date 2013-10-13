@@ -9,5 +9,5 @@
     <string name="action_refresh">Refresh</string>
     <string name="action_back">Back</string>
     <string name="menu_home">Home</string>
-
+	<string name="ic_forward">Next</string>
 </resources>
