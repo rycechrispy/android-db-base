@@ -23,7 +23,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Login Table Columns names
     private static final String KEY_ID = "id";
     private static final String KEY_USERNAME = "username";
-
+    private static final String KEY_PASSWORD = "password";
+    
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -33,7 +34,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_LOGIN_TABLE = "CREATE TABLE " + TABLE_LOGIN + "("
                 + KEY_ID + " INTEGER PRIMARY KEY,"
-                + KEY_USERNAME + " TEXT" + ")";
+                + KEY_USERNAME + " TEXT," 
+                + KEY_PASSWORD + " TEXT" +")";
         db.execSQL(CREATE_LOGIN_TABLE);
     }
 
@@ -50,12 +52,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     /**
      * Storing user details in database
      * */
-    public void addUser(String id, String username) {
+    public void addUser(String id, String username, String password) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_USERNAME, username); // UserName
         values.put(KEY_ID, id); // ID
+        values.put(KEY_PASSWORD, password); // password
 
         // Inserting Row
         db.insert(TABLE_LOGIN, null, values);
@@ -77,6 +80,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if(cursor.getCount() > 0){
             user.put("id", cursor.getString(1));
             user.put("username", cursor.getString(2));
+            user.put("password", cursor.getString(3));
         }
         cursor.close();
         db.close();

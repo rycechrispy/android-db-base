@@ -287,9 +287,7 @@ public class FashionFragment extends ListFragment {
 	}
 
 	private static class RowAdapter extends ArrayAdapter<RowData> {
-
 		private ArrayList<RowData> data = new ArrayList<RowData>();
-
 		public RowAdapter(Context context, int textViewResourceId,
 				ArrayList<RowData> row_data) {
 			super(context, textViewResourceId, row_data);
@@ -304,7 +302,6 @@ public class FashionFragment extends ListFragment {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder = new ViewHolder();
-
 			if (convertView == null) {
 				convertView = LayoutInflater.from(getContext()).inflate(
 						R.layout.list_itm, parent, false);

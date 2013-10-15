@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="5dip" >
+
+    <!-- Username -->
+
+    <TextView
+        android:id="@+id/acc_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:text="Category:"
+        android:textSize="14sp"
+        android:typeface="sans" />
+
+    <!-- Password -->
+
+    <TextView
+        android:id="@+id/acc_text2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/acc_text"
+        android:layout_alignBottom="@+id/acc_text"
+        android:layout_toRightOf="@+id/acc_text"
+        android:text="Information"
+        android:textSize="14sp"
+        android:typeface="sans" />
+
+</RelativeLayout>

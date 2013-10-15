@@ -41,6 +41,7 @@ public class Login extends Activity {
 	private static String KEY_SUCCESS = "success";
 	private static String KEY_ID = "id";
 	private static String KEY_USERNAME = "username";
+	private static String KEY_PASSWORD = "password";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -215,7 +216,7 @@ public class Login extends Activity {
 						 **/
 						UserFunctions logout = new UserFunctions();
 						logout.logoutUser(getApplicationContext());
-						db.addUser(json_user.getString(KEY_ID),json_user.getString(KEY_USERNAME));
+						db.addUser(json_user.getString(KEY_ID),json_user.getString(KEY_USERNAME), json_user.getString(KEY_PASSWORD));
 						/**
 						 *If JSON array details are stored in SQlite it launches the User Panel.
 						 **/

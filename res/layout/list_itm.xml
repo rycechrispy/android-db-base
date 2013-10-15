@@ -9,15 +9,18 @@
         android:id="@+id/imageView"
         android:layout_width="fill_parent"
         android:layout_height="350dp"
-        android:layout_marginTop="50dp"
         android:scaleType="centerCrop"/>
+        <!-- android:layout_marginTop="50dp" -->
 
     <TextView
         android:id="@+id/header"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/imageView"
+        android:layout_alignParentLeft="true"
         android:background="#99ffffff"
-        android:padding="12dp"
+        android:padding="0dp"
+        android:maxLines="2"
         android:text="Deneme Row"
         android:textColor="#000000" />
 

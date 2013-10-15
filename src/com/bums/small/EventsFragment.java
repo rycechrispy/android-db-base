@@ -2,6 +2,7 @@ package com.bums.small;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTabHost;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,7 +14,7 @@ import android.widget.TextView;
 
 
 public class EventsFragment extends Fragment {
-	private TextView text;
+	private FragmentTabHost mTabHost;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -23,21 +24,26 @@ public class EventsFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View v = LayoutInflater.from(getActivity()).inflate(R.layout.layout,
-				null);
+
+		mTabHost = new FragmentTabHost(getActivity());
+		mTabHost.setup(getActivity(), getChildFragmentManager(),
+				R.id.menu_settings);
 		
-		text = (TextView) v.findViewById(R.id.text);
-		if (getArguments() != null) {
-			//
-			try {
-				String value = getArguments().getString("key");
-				text.setText("Current Tab is: " + value);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return v;
+		Bundle b = new Bundle();
+		b.putString("key", "Christian Family Organization");
+		mTabHost.addTab(mTabHost.newTabSpec("cfo").setIndicator("Christian Family Organization"),
+				DetailsFragment.class, b);
+		
+		b = new Bundle();
+		b.putString("key", "Light of Salvation");
+		mTabHost.addTab(mTabHost.newTabSpec("los")
+				.setIndicator("Light of Salvation"), DetailsFragment.class, b);
+		
+		b = new Bundle();
+		b.putString("key", "Worship Service");
+		mTabHost.addTab(mTabHost.newTabSpec("ws")
+				.setIndicator("Worship Service"), DetailsFragment.class, b);
+		return mTabHost;
 	}
 
 	@Override
