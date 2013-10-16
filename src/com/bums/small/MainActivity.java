@@ -19,7 +19,7 @@ public class MainActivity extends FragmentActivity {
 	private HashMap<String,String> user;
 	private ArrayList<String> office;
 	private ArrayList<String> department;
-	private Fragment af;
+	private AccountFragment af;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,18 +33,18 @@ public class MainActivity extends FragmentActivity {
 
 		mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
 		mTabHost.setup(this, getSupportFragmentManager(), R.id.realtabcontent);
-		mTabHost.setOnTabChangedListener(new OnTabChangeListener(){
-			@Override
-			public void onTabChanged(String tabId) {
-				Fragment old_frag = getSupportFragmentManager().findFragmentByTag("office");
-			    if (!tabId.equals("account") && old_frag != null) {
-			    	FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-			    	transaction.detach(old_frag);
-			    	transaction.attach(new AccountFragment()); //if done this way probably have to set the lastest adapter to it
-			    	transaction.commit();
-			    }
-			}});
+//		mTabHost.setOnTabChangedListener(new OnTabChangeListener(){
+//			@Override
+//			public void onTabChanged(String tabId) {
+//				Fragment old_frag = getSupportFragmentManager().findFragmentByTag("office");
+//			    if (!tabId.equals("account") && old_frag != null) {
+//			    	FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//
+//			    	transaction.detach(old_frag);
+//			    	transaction.attach(new AccountFragment()); //if done this way probably have to set the lastest adapter to it
+//			    	transaction.commit();
+//			    }
+//			}});
 
 		Bundle b = new Bundle();
 		b.putString("key", "Fashion");
@@ -67,11 +67,11 @@ public class MainActivity extends FragmentActivity {
 				AccountFragment.class, b);
 	}
 	
-	public Fragment getAccountFragment() {
+	public AccountFragment getAccountFragment() {
 		return af;
 	}
 	
-	public void setAccountFragment(Fragment current) {
+	public void setAccountFragment(AccountFragment current) {
 		this.af = current;
 	}
 

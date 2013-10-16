@@ -33,6 +33,12 @@
         <activity
             android:name="MainActivity">
         </activity>
+        <activity
+            android:name="ChooseDepartment">
+        </activity>
+        <activity
+            android:name="ChooseOffice">
+        </activity>
     </application>
     <!-- Allow to connect with internet and to know the current network state -->
     <uses-permission android:name="android.permission.INTERNET" />

@@ -19,6 +19,7 @@
         android:text="General"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:typeface="sans" />
+        android:typeface="sans" 
+        />
 
 </RelativeLayout>
