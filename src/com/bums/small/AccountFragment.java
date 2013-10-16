@@ -1,27 +1,17 @@
 package com.bums.small;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.TreeSet;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 public class AccountFragment extends ListFragment {
@@ -33,7 +23,6 @@ public class AccountFragment extends ListFragment {
 	private static final int TYPE_D_DETAILS = 4;
 	private static final int TYPE_O_DETAILS = 5;
 	private static final int TYPE_MAX_COUNT = 6; //amount of types
-	private ArrayList<Integer> the_position = new ArrayList<Integer>();
 
 	private MyCustomAdapter mAdapter;
 	private Context context;
@@ -92,6 +81,7 @@ public class AccountFragment extends ListFragment {
 					group = data.getStringExtra("group");
 					department = data.getStringExtra("department"); 
 					mAdapter.addDepartmentDetails(group, department);
+					//add to database
 					flag = true;
 				} else if (choose.equals("choose_office")) {
 					office = data.getStringExtra("office");
@@ -101,6 +91,7 @@ public class AccountFragment extends ListFragment {
 						leadership = "Leadership";
 					}
 					mAdapter.addOfficeDetails(office, leadership);
+					//add to database
 				}
 			} 
 			if (resultCode == MainActivity.RESULT_CANCELED) {    
@@ -117,7 +108,7 @@ public class AccountFragment extends ListFragment {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View v, int position,
 					long id) {
-				int type = the_position.get(position);
+				int type = mAdapter.getPosition().get(position);
 				switch (type) {
 				case TYPE_ADDOFFICE:
 					Intent intent1 = new Intent(getActivity(), ChooseOffice.class);
@@ -126,9 +117,17 @@ public class AccountFragment extends ListFragment {
 				case TYPE_DEPARTMENT:
 					Intent intent = new Intent(getActivity(), ChooseDepartment.class);
 					startActivityForResult(intent, 1);
-
+					break;
+				case TYPE_D_DETAILS: 
+					mAdapter.removeDepartment(position);
+					//also remove from database
+					break;
+				case TYPE_O_DETAILS: 
+					mAdapter.removeOffice(position);
+					//also remove from database
 					break;
 				}
+					
 			}
 		});
 	}
@@ -136,15 +135,20 @@ public class AccountFragment extends ListFragment {
 	
 	public class MyCustomAdapter extends BaseAdapter {
 		private ArrayList<ArrayList<String>> mData = new ArrayList<ArrayList<String>>();
+		private ArrayList<Integer> the_position = new ArrayList<Integer>();
 		private LayoutInflater mInflater;
 		private ArrayList<String> the_labels;
-		private int addOfficePosition;
-		private int addDepartmentPosition;
-
-		private TreeSet mSeparatorsSet = new TreeSet();
 
 		public MyCustomAdapter() {
 			mInflater = (LayoutInflater)((Context) context).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		}
+		
+		public ArrayList<ArrayList<String>> getMData() {
+			return mData;
+		}
+		
+		public ArrayList<Integer> getPosition() {
+			return the_position;
 		}
 
 		public void addHeader(final String header) {
@@ -203,13 +207,23 @@ public class AccountFragment extends ListFragment {
 		}
 		
 		public int getAddOfficePosition() {
-			System.out.println(the_position.indexOf(TYPE_ADDOFFICE));
 			return the_position.indexOf(TYPE_ADDOFFICE);
 		}
 		
 		public int getAddDepartmentPosition() {
-			System.out.println(the_position.indexOf(TYPE_DEPARTMENT));
 			return the_position.indexOf(TYPE_DEPARTMENT);
+		}
+		
+		public void removeOffice(int position) {
+			the_position.remove(position);
+			mData.remove(position);
+			notifyDataSetChanged();
+		}
+		
+		public void removeDepartment(int position) {
+			the_position.remove(position);
+			mData.remove(position);
+			notifyDataSetChanged();
 		}
 
 		@Override
@@ -279,12 +293,10 @@ public class AccountFragment extends ListFragment {
 				case TYPE_ADDOFFICE:
 					convertView = mInflater.inflate(R.layout.add_row, null);
 					holder.textView = (TextView)convertView.findViewById(R.id.add);
-					//holder.textView2 = (TextView)convertView.findViewById(R.id.acc_text2);
 					break;
 				case TYPE_DEPARTMENT:
 					convertView = mInflater.inflate(R.layout.add_row, null);
 					holder.textView = (TextView)convertView.findViewById(R.id.add);
-					//holder.textView2 = (TextView)convertView.findViewById(R.id.acc_text2);
 					break;
 				case TYPE_D_DETAILS:
 					convertView = mInflater.inflate(R.layout.department_row, null);
