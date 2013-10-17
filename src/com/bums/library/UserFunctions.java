@@ -21,17 +21,21 @@ public class UserFunctions {
     //private static String loginURL = "http://192.168.1.141:80/small/";
     //private static String registerURL = "http://192.168.1.141:80/small/";
     
-    private static String loginURL = "http://192.168.1.113:80/small/";
-    private static String registerURL = "http://192.168.1.113:80/small/";
+    //private static String loginURL = "http://192.168.1.113:80/small/";
+    //private static String registerURL = "http://192.168.1.113:80/small/";
     
-    //private static String loginURL = "http://192.168.1.110:80/small/";
-    //private static String registerURL = "http://192.168.1.110:80/small/";
+    private static String loginURL = "http://192.168.1.110:80/small/";
+    private static String registerURL = "http://192.168.1.110:80/small/";
     private static String fashionURL = "https://api.instagram.com/v1/tags/incfashion/media/recent?client_id=a817372926af4107bb256a2036c6015d&count=50";
 
 
     private static String login_tag = "login";
     private static String register_tag = "register";
-    private static String fashion_tag = "fashion";
+    private static String store_office_tag = "store_office";
+    private static String store_department_tag = "store_department";
+    private static String delete_office_tag = "delete_office";
+    private static String delete_department_tag = "delete_department";
+    private static String office_tag = "get_offices";
 
 
     // constructor
@@ -42,7 +46,6 @@ public class UserFunctions {
     /**
      * Function to Login
      **/
-
     public JSONObject loginUser(String username, String password){
         // Building Parameters
         List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -64,6 +67,57 @@ public class UserFunctions {
         params.add(new BasicNameValuePair("username", username));
         params.add(new BasicNameValuePair("password", password));
         JSONObject json = jsonParser.getJSONFromUrl(registerURL, params);
+        return json;
+    }
+    
+    public JSONObject storeDepartment(String id, String department, String organization){
+        // Building Parameters
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("tag", store_department_tag));
+        params.add(new BasicNameValuePair("id", id));
+        params.add(new BasicNameValuePair("department", department));
+        params.add(new BasicNameValuePair("organization", organization));
+        JSONObject json = jsonParser.getJSONFromUrl(registerURL, params);
+        return json;
+    }
+    
+    public JSONObject deleteDepartment(String id, String organization){
+        // Building Parameters
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("tag", delete_department_tag));
+        params.add(new BasicNameValuePair("id", id));
+        params.add(new BasicNameValuePair("organization", organization));
+        JSONObject json = jsonParser.getJSONFromUrl(registerURL, params);
+        return json;
+    }
+    
+    public JSONObject storeOffice(String id, String officeType, String isLeader){
+        // Building Parameters
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("tag", store_office_tag));
+        params.add(new BasicNameValuePair("id", id));
+        params.add(new BasicNameValuePair("officeType", officeType));
+        params.add(new BasicNameValuePair("isLeader", isLeader));
+        JSONObject json = jsonParser.getJSONFromUrl(registerURL, params);
+        return json;
+    }
+    
+    public JSONObject deleteOffice(String id, String officeType){
+        // Building Parameters
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("tag", delete_office_tag));
+        params.add(new BasicNameValuePair("id", id));
+        params.add(new BasicNameValuePair("officeType", officeType));
+        JSONObject json = jsonParser.getJSONFromUrl(registerURL, params);
+        return json;
+    }
+    
+    public JSONObject getOffices(String id){
+        // Building Parameters
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("tag", office_tag));
+        params.add(new BasicNameValuePair("id", id));
+        JSONObject json = jsonParser.getJSONFromUrl(loginURL, params);
         return json;
     }
 

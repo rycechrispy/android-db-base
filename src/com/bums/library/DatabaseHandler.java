@@ -19,11 +19,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // Login table name
     private static final String TABLE_LOGIN = "login";
+    private static final String TABLE_OFFICE = "office";
+    private static final String TABLE_DEPARTMENT = "department";
 
     // Login Table Columns names
     private static final String KEY_ID = "id";
     private static final String KEY_USERNAME = "username";
     private static final String KEY_PASSWORD = "password";
+    
+    //office column names
+    private static final String KEY_OFFICETYPE = "officetype";
+    private static final String KEY_ISLEADER = "isLeader";
+    
+    //department column names
+    private static final String KEY_DEPARTMENT = "department";
+    private static final String KEY_GROUP = "organization";
     
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -37,6 +47,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + KEY_USERNAME + " TEXT," 
                 + KEY_PASSWORD + " TEXT" +")";
         db.execSQL(CREATE_LOGIN_TABLE);
+        
+        String CREATE_OFFICE_TABLE = "CREATE TABLE " + TABLE_OFFICE + "("
+                + KEY_ID + " INTEGER PRIMARY KEY,"
+                + KEY_OFFICETYPE + " TEXT," 
+                + KEY_ISLEADER + " BOOLEAN" +")";
+        db.execSQL(CREATE_OFFICE_TABLE);
+        
+        String CREATE_DEPARTMENT_TABLE = "CREATE TABLE " + TABLE_DEPARTMENT + "("
+                + KEY_ID + " INTEGER PRIMARY KEY,"
+                + KEY_DEPARTMENT + " TEXT," 
+                + KEY_GROUP + " TEXT" +")";
+        db.execSQL(CREATE_DEPARTMENT_TABLE);
     }
 
     // Upgrading database
@@ -44,7 +66,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if existed
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOGIN);
-
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_OFFICE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DEPARTMENT);
         // Create tables again
         onCreate(db);
     }
@@ -113,6 +136,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         // Delete All Rows
         db.delete(TABLE_LOGIN, null, null);
+        db.delete(TABLE_OFFICE, null, null);
+        db.delete(TABLE_DEPARTMENT, null, null);
         db.close();
     }
 

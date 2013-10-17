@@ -2,6 +2,10 @@ package com.bums.small;
 
 import java.util.ArrayList;
 
+import org.json.JSONObject;
+
+import com.bums.library.UserFunctions;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -80,9 +84,12 @@ public class AccountFragment extends ListFragment {
 				if (choose.equals("choose_department")) {
 					group = data.getStringExtra("group");
 					department = data.getStringExtra("department"); 
-					mAdapter.addDepartmentDetails(group, department);
-					//add to database
-					flag = true;
+					((MainActivity) getActivity()).setGroup(group);
+					((MainActivity) getActivity()).setDepartment(department);
+					((MainActivity) getActivity()).storeDepartmentASync();
+					//if (((MainActivity) getActivity()).isDepartmentUnique())
+						mAdapter.addDepartmentDetails(group, department);
+
 				} else if (choose.equals("choose_office")) {
 					office = data.getStringExtra("office");
 					isLeader = data.getBooleanExtra("isLeader", false);
@@ -90,8 +97,11 @@ public class AccountFragment extends ListFragment {
 					if (isLeader) {
 						leadership = "Leadership";
 					}
-					mAdapter.addOfficeDetails(office, leadership);
-					//add to database
+					((MainActivity) getActivity()).setOffice(office);
+					((MainActivity) getActivity()).setLeadership(leadership);
+					((MainActivity) getActivity()).storeOfficeASync();
+					//if (((MainActivity) getActivity()).isOfficeUnique())
+						mAdapter.addOfficeDetails(office, leadership);
 				}
 			} 
 			if (resultCode == MainActivity.RESULT_CANCELED) {    
@@ -216,12 +226,16 @@ public class AccountFragment extends ListFragment {
 		
 		public void removeOffice(int position) {
 			the_position.remove(position);
+			((MainActivity) getActivity()).setOffice(mData.get(position).get(0));
+			((MainActivity) getActivity()).deleteOfficeASync();
 			mData.remove(position);
 			notifyDataSetChanged();
 		}
 		
 		public void removeDepartment(int position) {
 			the_position.remove(position);
+			((MainActivity) getActivity()).setDepartment(mData.get(position).get(0)); //gets the group
+			((MainActivity) getActivity()).deleteDepartmentASync();
 			mData.remove(position);
 			notifyDataSetChanged();
 		}
