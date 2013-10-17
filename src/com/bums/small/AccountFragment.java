@@ -2,12 +2,12 @@ package com.bums.small;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.bums.library.UserFunctions;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -17,6 +17,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.bums.library.UserFunctions;
 
 public class AccountFragment extends ListFragment {
 
@@ -27,6 +30,9 @@ public class AccountFragment extends ListFragment {
 	private static final int TYPE_D_DETAILS = 4;
 	private static final int TYPE_O_DETAILS = 5;
 	private static final int TYPE_MAX_COUNT = 6; //amount of types
+	
+	private static String KEY_SUCCESS = "success";
+	private static String KEY_ERROR = "error";
 
 	private MyCustomAdapter mAdapter;
 	private Context context;
@@ -34,7 +40,8 @@ public class AccountFragment extends ListFragment {
 	private String department; 
 	private String choose;
 	private String office;
-	private boolean isLeader;
+	private String isLeader;
+	private boolean isLeaderBool;
 	private boolean flag = false;
 
 	public AccountFragment() {
@@ -84,24 +91,20 @@ public class AccountFragment extends ListFragment {
 				if (choose.equals("choose_department")) {
 					group = data.getStringExtra("group");
 					department = data.getStringExtra("department"); 
-					((MainActivity) getActivity()).setGroup(group);
-					((MainActivity) getActivity()).setDepartment(department);
-					((MainActivity) getActivity()).storeDepartmentASync();
+					storeDepartmentASync();
 					//if (((MainActivity) getActivity()).isDepartmentUnique())
-						mAdapter.addDepartmentDetails(group, department);
+						//mAdapter.addDepartmentDetails(group, department);
 
 				} else if (choose.equals("choose_office")) {
 					office = data.getStringExtra("office");
-					isLeader = data.getBooleanExtra("isLeader", false);
-					String leadership = "Officer";
-					if (isLeader) {
-						leadership = "Leadership";
+					isLeaderBool = data.getBooleanExtra("isLeader", false);
+					isLeader = "Officer";
+					if (isLeaderBool) {
+						isLeader = "Leadership";
 					}
-					((MainActivity) getActivity()).setOffice(office);
-					((MainActivity) getActivity()).setLeadership(leadership);
-					((MainActivity) getActivity()).storeOfficeASync();
+					storeOfficeASync();
 					//if (((MainActivity) getActivity()).isOfficeUnique())
-						mAdapter.addOfficeDetails(office, leadership);
+						//mAdapter.addOfficeDetails(office, leadership);
 				}
 			} 
 			if (resultCode == MainActivity.RESULT_CANCELED) {    
@@ -130,11 +133,9 @@ public class AccountFragment extends ListFragment {
 					break;
 				case TYPE_D_DETAILS: 
 					mAdapter.removeDepartment(position);
-					//also remove from database
 					break;
 				case TYPE_O_DETAILS: 
 					mAdapter.removeOffice(position);
-					//also remove from database
 					break;
 				}
 					
@@ -226,16 +227,16 @@ public class AccountFragment extends ListFragment {
 		
 		public void removeOffice(int position) {
 			the_position.remove(position);
-			((MainActivity) getActivity()).setOffice(mData.get(position).get(0));
-			((MainActivity) getActivity()).deleteOfficeASync();
+			office = mData.get(position).get(0);
+			deleteOfficeASync();
 			mData.remove(position);
 			notifyDataSetChanged();
 		}
 		
 		public void removeDepartment(int position) {
 			the_position.remove(position);
-			((MainActivity) getActivity()).setDepartment(mData.get(position).get(0)); //gets the group
-			((MainActivity) getActivity()).deleteDepartmentASync();
+			group = mData.get(position).get(0); //gets the group
+			deleteDepartmentASync();
 			mData.remove(position);
 			notifyDataSetChanged();
 		}
@@ -529,6 +530,171 @@ public class AccountFragment extends ListFragment {
 	public static class ViewHolder {
 		public TextView textView;
 		public TextView textView2;
+	}
+	
+	private class StoreOffice extends AsyncTask<String, String, JSONObject> {
+		String id;
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			id = ((MainActivity) getActivity()).getUser().get("id");
+		}
+		@Override
+		protected JSONObject doInBackground(String... args) {
+			UserFunctions userFunction = new UserFunctions();
+			JSONObject json = userFunction.storeOffice(id, office, isLeader);
+			return json;
+		}
+		@Override
+		protected void onPostExecute(JSONObject json) {
+			try {
+				if (json.getString(KEY_SUCCESS) != null) {
+					String res = json.getString(KEY_SUCCESS);
+					String red = json.getString(KEY_ERROR);
+
+					if(Integer.parseInt(res) == 1) {
+						mAdapter.addOfficeDetails(office, isLeader);
+	
+						Toast.makeText(getActivity().getApplicationContext(),
+								"Successfully added office", Toast.LENGTH_SHORT).show();
+						
+					} else if (Integer.parseInt(red) == 2){
+						Toast.makeText(getActivity().getApplicationContext(),
+								"You are already that officer", Toast.LENGTH_SHORT).show();
+					} else if (Integer.parseInt(red) == 3){
+						Toast.makeText(getActivity().getApplicationContext(),
+								"JSON error", Toast.LENGTH_SHORT).show();
+					}
+				} else {
+					Toast.makeText(getActivity().getApplicationContext(),
+							"Error occurred adding office", Toast.LENGTH_SHORT).show();
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}}
+	
+	private class StoreDepartment extends AsyncTask<String, String, JSONObject> {
+		String id;
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			id = ((MainActivity) getActivity()).getUser().get("id");
+		}
+		@Override
+		protected JSONObject doInBackground(String... args) {
+			UserFunctions userFunction = new UserFunctions();
+			JSONObject json = userFunction.storeDepartment(id, department, group);
+			return json;
+		}
+		@Override
+		protected void onPostExecute(JSONObject json) {
+			try {
+				if (json.getString(KEY_SUCCESS) != null) {
+					String res = json.getString(KEY_SUCCESS);
+					String red = json.getString(KEY_ERROR);
+
+					if(Integer.parseInt(res) == 1) {
+						mAdapter.addDepartmentDetails(group, department);
+	
+						Toast.makeText(getActivity().getApplicationContext(),
+								"Successfully added organization/department", Toast.LENGTH_SHORT).show();
+						
+					} else if (Integer.parseInt(red) == 2){
+						Toast.makeText(getActivity().getApplicationContext(),
+								"You are already in that organization", Toast.LENGTH_SHORT).show();
+					} else if (Integer.parseInt(red) == 3){
+						Toast.makeText(getActivity().getApplicationContext(),
+								"JSON error", Toast.LENGTH_SHORT).show();
+					}
+				} else {
+					Toast.makeText(getActivity().getApplicationContext(),
+							"Error occurred adding department", Toast.LENGTH_SHORT).show();
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}}
+	
+	private class DeleteOffice extends AsyncTask<String, String, JSONObject> {
+		String id;
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			id = ((MainActivity) getActivity()).getUser().get("id");
+		}
+		@Override
+		protected JSONObject doInBackground(String... args) {
+			UserFunctions userFunction = new UserFunctions();
+			JSONObject json = userFunction.deleteOffice(id, office);
+			return json;
+		}
+		@Override
+		protected void onPostExecute(JSONObject json) {
+
+			try {
+				if (json.getString(KEY_SUCCESS) != null) {
+					String res = json.getString(KEY_SUCCESS);
+
+					if(Integer.parseInt(res) == 1) {
+						
+						Toast.makeText(getActivity().getApplicationContext(),
+								"Successfully removed office", Toast.LENGTH_SHORT).show();
+					}
+				} else {
+					Toast.makeText(getActivity().getApplicationContext(),
+							"Error occurred removing office", Toast.LENGTH_SHORT).show();
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}}
+	
+	private class DeleteDepartment extends AsyncTask<String, String, JSONObject> {
+		String id;
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			id = ((MainActivity) getActivity()).getUser().get("id");
+		}
+		@Override
+		protected JSONObject doInBackground(String... args) {
+			UserFunctions userFunction = new UserFunctions();
+			JSONObject json = userFunction.deleteDepartment(id, group);
+			return json;
+		}
+		@Override
+		protected void onPostExecute(JSONObject json) {
+			try {
+				if (json.getString(KEY_SUCCESS) != null) {
+					String res = json.getString(KEY_SUCCESS);
+					if(Integer.parseInt(res) == 1) {	
+						Toast.makeText(getActivity().getApplicationContext(),
+								"Successfully removed organization", Toast.LENGTH_SHORT).show();
+					}
+				} else {
+					Toast.makeText(getActivity().getApplicationContext(),
+							"Error occurred removing organization", Toast.LENGTH_SHORT).show();
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}}
+	
+	public void storeOfficeASync(){
+		new StoreOffice().execute();
+	}
+	
+	public void storeDepartmentASync(){
+		new StoreDepartment().execute();
+	}
+	
+	public void deleteOfficeASync(){
+		new DeleteOffice().execute();
+	}
+	
+	public void deleteDepartmentASync(){
+		new DeleteDepartment().execute();
 	}
 
 }
