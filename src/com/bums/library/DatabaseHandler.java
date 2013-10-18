@@ -6,7 +6,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+
+import com.bums.small.DepartmentData;
+import com.bums.small.OfficeData;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
@@ -86,6 +90,78 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // Inserting Row
         db.insert(TABLE_LOGIN, null, values);
         db.close(); // Closing database connection
+    }
+    
+    public void addOffice(String id, String officeType, String isLeader) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID, id); // ID
+        values.put(KEY_OFFICETYPE, officeType);
+        values.put(KEY_ISLEADER, isLeader); 
+
+        // Inserting Row
+        db.insert(TABLE_OFFICE, null, values);
+        db.close(); // Closing database connection
+    }
+    
+    public void addDepartment(String id, String organization, String department) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID, id); // ID
+        values.put(KEY_DEPARTMENT, department);
+        values.put(KEY_GROUP, organization); 
+
+        // Inserting Row
+        db.insert(TABLE_DEPARTMENT, null, values);
+        db.close(); // Closing database connection
+    }
+    
+    /**
+     * Getting offices data from database
+     * */
+    public ArrayList<OfficeData> getOffices(String id){
+    	ArrayList<OfficeData> offices = new ArrayList<OfficeData>();
+        String selectQuery = "SELECT rowid _id, * FROM " + TABLE_OFFICE + "WHERE id =" + id;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // Move to first row
+        if (cursor != null) {
+	        cursor.moveToFirst();
+	        do {
+	        	String officeType = cursor.getString(2);
+	        	String isLeader = cursor.getString(3);
+	        	
+	            offices.add(new OfficeData(officeType, isLeader));
+	        } while (cursor.moveToNext());
+	        cursor.close();
+        }
+        db.close();
+        return offices;
+    }
+    
+    /**
+     * Getting offices data from database
+     * */
+    public ArrayList<DepartmentData> getDepartment(String id){
+    	ArrayList<DepartmentData> organizations = new ArrayList<DepartmentData>();
+        String selectQuery = "SELECT rowid _id, * FROM " + TABLE_DEPARTMENT + "WHERE id =" + id;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // Move to first row
+        if (cursor != null) {
+	        cursor.moveToFirst();
+	        do {
+	        	String organization = cursor.getString(3);
+	        	String department = cursor.getString(2);
+	        	
+	        	organizations.add(new DepartmentData(organization, department));
+	        } while (cursor.moveToNext());
+	        cursor.close();
+        }
+        db.close();
+        return organizations;
     }
 
 

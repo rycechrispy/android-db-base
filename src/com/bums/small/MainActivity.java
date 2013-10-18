@@ -1,5 +1,6 @@
 package com.bums.small;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.json.JSONException;
@@ -19,6 +20,8 @@ import com.bums.library.UserFunctions;
 public class MainActivity extends FragmentActivity {
 	private FragmentTabHost mTabHost;
 	private HashMap<String,String> user;
+	private ArrayList<OfficeData> offices;
+	private ArrayList<DepartmentData> department;
 
 
 	@Override
@@ -28,6 +31,12 @@ public class MainActivity extends FragmentActivity {
 		DatabaseHandler db = new DatabaseHandler(getApplicationContext());
 		user = new HashMap<String, String>();
 		user = db.getUserDetails();
+		
+//		offices = new ArrayList<OfficeData>();
+//		offices = db.getOffices(user.get("id"));
+		
+//		department = new ArrayList<DepartmentData>();
+//		department = db.getDepartment(user.get("id"));
 		
 		System.out.println(db.getRowCount());
 
@@ -59,6 +68,14 @@ public class MainActivity extends FragmentActivity {
 
 	public HashMap<String,String> getUser() {
 		return user;
+	}
+
+	public ArrayList<OfficeData> getOffices() {
+		return offices;
+	}
+
+	public ArrayList<DepartmentData> getDepartment() {
+		return department;
 	}
 
 	@Override
