@@ -2,6 +2,7 @@ package com.bums.small;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,7 +31,7 @@ public class AccountFragment extends ListFragment {
 	private static final int TYPE_D_DETAILS = 4;
 	private static final int TYPE_O_DETAILS = 5;
 	private static final int TYPE_MAX_COUNT = 6; //amount of types
-	
+
 	private static String KEY_SUCCESS = "success";
 	private static String KEY_ERROR = "error";
 
@@ -42,7 +43,10 @@ public class AccountFragment extends ListFragment {
 	private String office;
 	private String isLeader;
 	private boolean isLeaderBool;
-	private boolean flag = false;
+	private ArrayList<OfficeData> officeDataList;
+	private JSONArray officeJson;
+	private ArrayList<DepartmentData> departmentDataList;
+	private JSONArray departmentJson;
 
 	public AccountFragment() {
 	}
@@ -67,10 +71,8 @@ public class AccountFragment extends ListFragment {
 		mAdapter.addOffice("Add Office");
 		mAdapter.addHeader("Organization and Department"); //organization = kad, choir, over - department = cfo, los, ws
 		mAdapter.addDepartment("Add Organization and Department");
-//		if (flag) {//have an array that will go through the set of strings
-//			mAdapter.addDepartmentDetails(group, department);
-//		}
-		//mAdapter.addDepartmentDetails("Binhi", "CFO");
+		new GetOffices().execute();
+		new GetDepartment().execute();
 		setListAdapter(mAdapter);
 		return v;
 	}
@@ -93,7 +95,7 @@ public class AccountFragment extends ListFragment {
 					department = data.getStringExtra("department"); 
 					storeDepartmentASync();
 					//if (((MainActivity) getActivity()).isDepartmentUnique())
-						//mAdapter.addDepartmentDetails(group, department);
+					//mAdapter.addDepartmentDetails(group, department);
 
 				} else if (choose.equals("choose_office")) {
 					office = data.getStringExtra("office");
@@ -104,7 +106,7 @@ public class AccountFragment extends ListFragment {
 					}
 					storeOfficeASync();
 					//if (((MainActivity) getActivity()).isOfficeUnique())
-						//mAdapter.addOfficeDetails(office, leadership);
+					//mAdapter.addOfficeDetails(office, leadership);
 				}
 			} 
 			if (resultCode == MainActivity.RESULT_CANCELED) {    
@@ -138,12 +140,62 @@ public class AccountFragment extends ListFragment {
 					mAdapter.removeOffice(position);
 					break;
 				}
-					
+
 			}
 		});
 	}
-	
-	
+
+	public void getOfficeInformation(JSONObject json) {
+		officeDataList = new ArrayList<OfficeData>();
+		try {
+			if (json.getString(KEY_SUCCESS) != null) {
+				String res = json.getString(KEY_SUCCESS);
+				String red = json.getString(KEY_ERROR);
+
+				if(Integer.parseInt(res) == 1) {
+					officeJson = json.getJSONArray("offices");
+					for (int i = 0; i < officeJson.length(); i++) {
+						JSONObject data = officeJson.getJSONObject(i);
+						String officeType = data.getString("officeType");
+						String isLeader = data.getString("isLeader");
+
+						officeDataList.add(new OfficeData(officeType, isLeader));
+					}
+				} else if (Integer.parseInt(red) == 4){
+
+				}
+			} 
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void getDepartmentInformation(JSONObject json) {
+		departmentDataList = new ArrayList<DepartmentData>();
+		try {
+			if (json.getString(KEY_SUCCESS) != null) {
+				String res = json.getString(KEY_SUCCESS);
+				String red = json.getString(KEY_ERROR);
+
+				if(Integer.parseInt(res) == 1) {
+					departmentJson = json.getJSONArray("organization");
+					for (int i = 0; i < departmentJson.length(); i++) {
+						JSONObject data = departmentJson.getJSONObject(i);
+						String organization = data.getString("organization");
+						String department = data.getString("department");
+
+						departmentDataList.add(new DepartmentData(organization, department));
+					}
+				} else if (Integer.parseInt(red) == 4){
+
+				}
+			} 
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+
 	public class MyCustomAdapter extends BaseAdapter {
 		private ArrayList<ArrayList<String>> mData = new ArrayList<ArrayList<String>>();
 		private ArrayList<Integer> the_position = new ArrayList<Integer>();
@@ -153,11 +205,11 @@ public class AccountFragment extends ListFragment {
 		public MyCustomAdapter() {
 			mInflater = (LayoutInflater)((Context) context).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		}
-		
+
 		public ArrayList<ArrayList<String>> getMData() {
 			return mData;
 		}
-		
+
 		public ArrayList<Integer> getPosition() {
 			return the_position;
 		}
@@ -216,15 +268,15 @@ public class AccountFragment extends ListFragment {
 			the_position.add(getAddOfficePosition(), TYPE_O_DETAILS);
 			notifyDataSetChanged();
 		}
-		
+
 		public int getAddOfficePosition() {
 			return the_position.indexOf(TYPE_ADDOFFICE);
 		}
-		
+
 		public int getAddDepartmentPosition() {
 			return the_position.indexOf(TYPE_DEPARTMENT);
 		}
-		
+
 		public void removeOffice(int position) {
 			the_position.remove(position);
 			office = mData.get(position).get(0);
@@ -232,7 +284,7 @@ public class AccountFragment extends ListFragment {
 			mData.remove(position);
 			notifyDataSetChanged();
 		}
-		
+
 		public void removeDepartment(int position) {
 			the_position.remove(position);
 			group = mData.get(position).get(0); //gets the group
@@ -265,7 +317,7 @@ public class AccountFragment extends ListFragment {
 		public long getItemId(int position) {
 			return position;
 		}
-		
+
 		@Override
 		public boolean isEnabled(int position) {
 			int type = getItemViewType(position);
@@ -362,176 +414,102 @@ public class AccountFragment extends ListFragment {
 
 	}
 
-	/*
-	public class MyCustomAdapter extends BaseAdapter {
-		private ArrayList<ArrayList<String>> mData = new ArrayList<ArrayList<String>>();
-		private LayoutInflater mInflater;
-		private ArrayList<String> the_labels;
-		private int officeLast;
-		private int departLast;
-
-		private TreeSet mSeparatorsSet = new TreeSet();
-
-		public MyCustomAdapter() {
-			mInflater = (LayoutInflater)((Context) context).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		}
-
-		public void addHeader(final String header) {
-			the_labels = new ArrayList<String>();
-			the_labels.add(header);
-			mData.add(the_labels);
-			the_position.add(TYPE_HEADER);
-			notifyDataSetChanged();
-		}
-
-
-		public void addCategoryInfo(final String category, final String info) {
-			the_labels = new ArrayList<String>();
-			the_labels.add(category);
-			the_labels.add(info);
-			mData.add(the_labels);
-			// save separator position
-			the_position.add(TYPE_CATEGORY);
-			notifyDataSetChanged();
-		}
-
-		public void addOffice(final String adder) {
-			the_labels = new ArrayList<String>();
-			the_labels.add(adder);
-			mData.add(the_labels);
-			the_position.add(TYPE_ADDOFFICE);
-			notifyDataSetChanged();
-		}
-
-		public void addDepartment(final String adder) {
-			the_labels = new ArrayList<String>();
-			the_labels.add(adder);
-			mData.add(the_labels);
-			the_position.add(TYPE_DEPARTMENT);
-			notifyDataSetChanged();
-		}
-
-		public void addDepartmentDetails(final String group, final String department) {
-			the_labels = new ArrayList<String>();
-			the_labels.add(group);
-			the_labels.add(department);
-			mData.add(the_labels);
-			// save separator position
-			the_position.add(TYPE_D_DETAILS);
-			notifyDataSetChanged();
-		}
-
-		public void addOfficeDetails(final String office, final String is_leader) {
-			the_labels = new ArrayList<String>();
-			the_labels.add(office);
-			the_labels.add(is_leader);
-			mData.add(the_labels);
-			// save separator position
-			the_position.add(TYPE_O_DETAILS);
-			notifyDataSetChanged();
-		}
-
-		@Override
-		public int getItemViewType(int position) {
-			return the_position.get(position);
-		}
-
-		@Override
-		public int getViewTypeCount() {
-			return TYPE_MAX_COUNT;
-		}
-
-		@Override
-		public int getCount() {
-			return mData.size();
-		}
-
-		@Override
-		public ArrayList<String> getItem(int position) {
-			return mData.get(position);
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			ViewHolder holder = null;
-			int type = getItemViewType(position);
-			System.out.println("getView " + position + " " + convertView + " type = " + type);
-			if (convertView == null) {
-				holder = new ViewHolder();
-				switch (type) {
-				case TYPE_HEADER:
-					convertView = mInflater.inflate(R.layout.header_row, null);
-					holder.textView = (TextView)convertView.findViewById(R.id.acc_header);
-					break;
-				case TYPE_ADDOFFICE:
-					convertView = mInflater.inflate(R.layout.add_row, null);
-					holder.textView = (TextView)convertView.findViewById(R.id.add);
-					//holder.textView2 = (TextView)convertView.findViewById(R.id.acc_text2);
-					break;
-				case TYPE_DEPARTMENT:
-					convertView = mInflater.inflate(R.layout.add_row, null);
-					holder.textView = (TextView)convertView.findViewById(R.id.add);
-					//holder.textView2 = (TextView)convertView.findViewById(R.id.acc_text2);
-					break;
-				case TYPE_D_DETAILS:
-					convertView = mInflater.inflate(R.layout.department_row, null);
-					holder.textView = (TextView)convertView.findViewById(R.id.group);
-					holder.textView2 = (TextView)convertView.findViewById(R.id.department);
-					break;
-				case TYPE_O_DETAILS:
-					convertView = mInflater.inflate(R.layout.office_row, null);
-					holder.textView = (TextView)convertView.findViewById(R.id.office);
-					holder.textView2 = (TextView)convertView.findViewById(R.id.is_leader);
-					break;
-				case TYPE_CATEGORY:
-					convertView = mInflater.inflate(R.layout.category_row, null);
-					holder.textView = (TextView)convertView.findViewById(R.id.acc_text);
-					holder.textView2 = (TextView)convertView.findViewById(R.id.acc_text2);
-					break;
-				}
-				convertView.setTag(holder);
-			} else {
-				holder = (ViewHolder)convertView.getTag();
-			}
-			switch (type) {
-			case TYPE_HEADER:
-				holder.textView.setText(mData.get(position).get(0));
-				break;
-			case TYPE_ADDOFFICE:
-				holder.textView.setText(mData.get(position).get(0));
-				break;
-			case TYPE_DEPARTMENT:
-				holder.textView.setText(mData.get(position).get(0));
-				break;
-			case TYPE_D_DETAILS:
-				holder.textView.setText(mData.get(position).get(0));
-				holder.textView2.setText(mData.get(position).get(1));
-				break;
-			case TYPE_O_DETAILS:
-				holder.textView.setText(mData.get(position).get(0));
-				holder.textView2.setText(mData.get(position).get(1));
-				break;
-			case TYPE_CATEGORY:
-				holder.textView.setText(mData.get(position).get(0));
-				holder.textView2.setText(mData.get(position).get(1));
-				break;
-			}
-
-			return convertView;
-		}
-
-	}
-*/
 	public static class ViewHolder {
 		public TextView textView;
 		public TextView textView2;
 	}
+
+
+
+	private class GetOffices extends AsyncTask<String, String, JSONObject> {
+		String id;
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			id = ((MainActivity) getActivity()).getUser().get("id");
+		}
+		@Override
+		protected JSONObject doInBackground(String... args) {
+			UserFunctions userFunction = new UserFunctions();
+			JSONObject json = userFunction.getOffices(id);
+			getOfficeInformation(json);
+			return json;
+		}
+		@Override
+		protected void onPostExecute(JSONObject json) {
+			try {
+				if (json.getString(KEY_SUCCESS) != null) {
+					String res = json.getString(KEY_SUCCESS);
+					String red = json.getString(KEY_ERROR);
+
+					if(Integer.parseInt(res) == 1) {
+						for (int i = 0; i < officeDataList.size(); i++) {
+							String officeType = officeDataList.get(i).getOfficeType();
+							String isLeader = officeDataList.get(i).getIsLeader();
+							mAdapter.addOfficeDetails(officeType, isLeader);
+						}
+
+						Toast.makeText(getActivity().getApplicationContext(),
+								"Successfully retrieved offices", Toast.LENGTH_SHORT).show();
+
+					} else if (Integer.parseInt(red) == 4){
+						Toast.makeText(getActivity().getApplicationContext(),
+								"You have no offices", Toast.LENGTH_SHORT).show();
+					} 
+				} else {
+					Toast.makeText(getActivity().getApplicationContext(),
+							"Error occurred retrieving office", Toast.LENGTH_SHORT).show();
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}}
+
+	private class GetDepartment extends AsyncTask<String, String, JSONObject> {
+		String id;
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			id = ((MainActivity) getActivity()).getUser().get("id");
+		}
+		@Override
+		protected JSONObject doInBackground(String... args) {
+			UserFunctions userFunction = new UserFunctions();
+			JSONObject json = userFunction.getDepartment(id);
+			getDepartmentInformation(json);
+			return json;
+		}
+		@Override
+		protected void onPostExecute(JSONObject json) {
+			try {
+				if (json.getString(KEY_SUCCESS) != null) {
+					String res = json.getString(KEY_SUCCESS);
+					String red = json.getString(KEY_ERROR);
+
+					if(Integer.parseInt(res) == 1) {
+						for (int i = 0; i < departmentDataList.size(); i++) {
+							String organization = departmentDataList.get(i).getOrganization();
+							String department = departmentDataList.get(i).getDepartment();
+							mAdapter.addDepartmentDetails(organization, department);
+						}
+
+						Toast.makeText(getActivity().getApplicationContext(),
+								"Successfully retrieved organizations", Toast.LENGTH_SHORT).show();
+
+					} else if (Integer.parseInt(red) == 4){
+						Toast.makeText(getActivity().getApplicationContext(),
+								"You have no organization", Toast.LENGTH_SHORT).show();
+					} 
+				} else {
+					Toast.makeText(getActivity().getApplicationContext(),
+							"Error occurred retrieving office", Toast.LENGTH_SHORT).show();
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}}
 	
+
 	private class StoreOffice extends AsyncTask<String, String, JSONObject> {
 		String id;
 		@Override
@@ -554,10 +532,10 @@ public class AccountFragment extends ListFragment {
 
 					if(Integer.parseInt(res) == 1) {
 						mAdapter.addOfficeDetails(office, isLeader);
-	
+
 						Toast.makeText(getActivity().getApplicationContext(),
 								"Successfully added office", Toast.LENGTH_SHORT).show();
-						
+
 					} else if (Integer.parseInt(red) == 2){
 						Toast.makeText(getActivity().getApplicationContext(),
 								"You are already that officer", Toast.LENGTH_SHORT).show();
@@ -573,7 +551,7 @@ public class AccountFragment extends ListFragment {
 				e.printStackTrace();
 			}
 		}}
-	
+
 	private class StoreDepartment extends AsyncTask<String, String, JSONObject> {
 		String id;
 		@Override
@@ -596,10 +574,10 @@ public class AccountFragment extends ListFragment {
 
 					if(Integer.parseInt(res) == 1) {
 						mAdapter.addDepartmentDetails(group, department);
-	
+
 						Toast.makeText(getActivity().getApplicationContext(),
 								"Successfully added organization/department", Toast.LENGTH_SHORT).show();
-						
+
 					} else if (Integer.parseInt(red) == 2){
 						Toast.makeText(getActivity().getApplicationContext(),
 								"You are already in that organization", Toast.LENGTH_SHORT).show();
@@ -615,7 +593,7 @@ public class AccountFragment extends ListFragment {
 				e.printStackTrace();
 			}
 		}}
-	
+
 	private class DeleteOffice extends AsyncTask<String, String, JSONObject> {
 		String id;
 		@Override
@@ -637,7 +615,7 @@ public class AccountFragment extends ListFragment {
 					String res = json.getString(KEY_SUCCESS);
 
 					if(Integer.parseInt(res) == 1) {
-						
+
 						Toast.makeText(getActivity().getApplicationContext(),
 								"Successfully removed office", Toast.LENGTH_SHORT).show();
 					}
@@ -649,7 +627,7 @@ public class AccountFragment extends ListFragment {
 				e.printStackTrace();
 			}
 		}}
-	
+
 	private class DeleteDepartment extends AsyncTask<String, String, JSONObject> {
 		String id;
 		@Override
@@ -680,19 +658,19 @@ public class AccountFragment extends ListFragment {
 				e.printStackTrace();
 			}
 		}}
-	
+
 	public void storeOfficeASync(){
 		new StoreOffice().execute();
 	}
-	
+
 	public void storeDepartmentASync(){
 		new StoreDepartment().execute();
 	}
-	
+
 	public void deleteOfficeASync(){
 		new DeleteOffice().execute();
 	}
-	
+
 	public void deleteDepartmentASync(){
 		new DeleteDepartment().execute();
 	}
