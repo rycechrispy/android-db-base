@@ -20,6 +20,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bums.library.DatabaseHandler;
 import com.bums.library.UserFunctions;
 
 public class AccountFragment extends ListFragment {
@@ -47,6 +48,7 @@ public class AccountFragment extends ListFragment {
 	private JSONArray officeJson;
 	private ArrayList<DepartmentData> departmentDataList;
 	private JSONArray departmentJson;
+	private String id;
 
 	public AccountFragment() {
 	}
@@ -62,6 +64,8 @@ public class AccountFragment extends ListFragment {
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		View v = inflater.inflate(R.layout.account_list, container, false);
+		
+		id = ((MainActivity) getActivity()).getUser().get("id");
 		context = inflater.getContext();
 		mAdapter = new MyCustomAdapter();
 		mAdapter.addHeader("General");
@@ -71,8 +75,24 @@ public class AccountFragment extends ListFragment {
 		mAdapter.addOffice("Add Office");
 		mAdapter.addHeader("Organization and Department"); //organization = kad, choir, over - department = cfo, los, ws
 		mAdapter.addDepartment("Add Organization and Department");
-		new GetOffices().execute();
-		new GetDepartment().execute();
+		
+		DatabaseHandler db = new DatabaseHandler(getActivity().getApplicationContext());
+		officeDataList = db.getOffices(id);
+		for (int i = 0; i < officeDataList.size(); i++) {
+			String officeType = officeDataList.get(i).getOfficeType();
+			String isLeader = officeDataList.get(i).getIsLeader();
+			mAdapter.addOfficeDetails(officeType, isLeader);
+		}
+		
+		departmentDataList = db.getDepartment(id);
+		for (int i = 0; i < departmentDataList.size(); i++) {
+			String organization = departmentDataList.get(i).getOrganization();
+			String department = departmentDataList.get(i).getDepartment();
+			mAdapter.addDepartmentDetails(organization, department);
+		}
+		
+		//new GetOffices().execute();
+		//new GetDepartment().execute();
 		setListAdapter(mAdapter);
 		return v;
 	}
@@ -93,10 +113,17 @@ public class AccountFragment extends ListFragment {
 				if (choose.equals("choose_department")) {
 					group = data.getStringExtra("group");
 					department = data.getStringExtra("department"); 
-					storeDepartmentASync();
+					DatabaseHandler db = new DatabaseHandler(getActivity().getApplicationContext());
+					if (db.addDepartment(id, group, department)) {
+						mAdapter.addDepartmentDetails(group, department);
+					} else {
+						Toast.makeText(getActivity().getApplicationContext(),
+								"You are already that officer", Toast.LENGTH_SHORT).show();
+					}
+					//storeDepartmentASync();
 					//if (((MainActivity) getActivity()).isDepartmentUnique())
 					//mAdapter.addDepartmentDetails(group, department);
-
+					
 				} else if (choose.equals("choose_office")) {
 					office = data.getStringExtra("office");
 					isLeaderBool = data.getBooleanExtra("isLeader", false);
@@ -104,9 +131,14 @@ public class AccountFragment extends ListFragment {
 					if (isLeaderBool) {
 						isLeader = "Leadership";
 					}
-					storeOfficeASync();
-					//if (((MainActivity) getActivity()).isOfficeUnique())
-					//mAdapter.addOfficeDetails(office, leadership);
+					DatabaseHandler db = new DatabaseHandler(getActivity().getApplicationContext());
+					if (db.addOffice(id, office, isLeader)) {
+						mAdapter.addOfficeDetails(office, isLeader);
+					} else {
+						Toast.makeText(getActivity().getApplicationContext(),
+								"You are already that officer", Toast.LENGTH_SHORT).show();
+					}
+					//storeOfficeASync();
 				}
 			} 
 			if (resultCode == MainActivity.RESULT_CANCELED) {    
@@ -280,7 +312,9 @@ public class AccountFragment extends ListFragment {
 		public void removeOffice(int position) {
 			the_position.remove(position);
 			office = mData.get(position).get(0);
-			deleteOfficeASync();
+			//deleteOfficeASync();
+			DatabaseHandler db = new DatabaseHandler(getActivity().getApplicationContext());
+			db.deleteOffice(id, office);
 			mData.remove(position);
 			notifyDataSetChanged();
 		}
@@ -288,7 +322,9 @@ public class AccountFragment extends ListFragment {
 		public void removeDepartment(int position) {
 			the_position.remove(position);
 			group = mData.get(position).get(0); //gets the group
-			deleteDepartmentASync();
+			//deleteDepartmentASync();
+			DatabaseHandler db = new DatabaseHandler(getActivity().getApplicationContext());
+			db.deleteDepartment(id, group);
 			mData.remove(position);
 			notifyDataSetChanged();
 		}
@@ -441,7 +477,6 @@ public class AccountFragment extends ListFragment {
 				if (json.getString(KEY_SUCCESS) != null) {
 					String res = json.getString(KEY_SUCCESS);
 					String red = json.getString(KEY_ERROR);
-
 					if(Integer.parseInt(res) == 1) {
 						for (int i = 0; i < officeDataList.size(); i++) {
 							String officeType = officeDataList.get(i).getOfficeType();
@@ -531,6 +566,8 @@ public class AccountFragment extends ListFragment {
 					String red = json.getString(KEY_ERROR);
 
 					if(Integer.parseInt(res) == 1) {
+						//DatabaseHandler db = new DatabaseHandler(getActivity().getApplicationContext());
+						//db.addOffice(id, office, isLeader);
 						mAdapter.addOfficeDetails(office, isLeader);
 
 						Toast.makeText(getActivity().getApplicationContext(),

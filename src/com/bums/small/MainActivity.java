@@ -20,8 +20,6 @@ import com.bums.library.UserFunctions;
 public class MainActivity extends FragmentActivity {
 	private FragmentTabHost mTabHost;
 	private HashMap<String,String> user;
-	private ArrayList<OfficeData> offices;
-	private ArrayList<DepartmentData> department;
 
 
 	@Override
@@ -32,14 +30,6 @@ public class MainActivity extends FragmentActivity {
 		user = new HashMap<String, String>();
 		user = db.getUserDetails();
 		
-//		offices = new ArrayList<OfficeData>();
-//		offices = db.getOffices(user.get("id"));
-		
-//		department = new ArrayList<DepartmentData>();
-//		department = db.getDepartment(user.get("id"));
-		
-		System.out.println(db.getRowCount());
-
 		setContentView(R.layout.bottom_tabs);
 
 		mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
@@ -68,14 +58,6 @@ public class MainActivity extends FragmentActivity {
 
 	public HashMap<String,String> getUser() {
 		return user;
-	}
-
-	public ArrayList<OfficeData> getOffices() {
-		return offices;
-	}
-
-	public ArrayList<DepartmentData> getDepartment() {
-		return department;
 	}
 
 	@Override
