@@ -1,21 +1,14 @@
 package com.bums.small;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
 import android.webkit.WebView;
-import android.widget.Toast;
 
 import com.bums.library.DatabaseHandler;
-import com.bums.library.UserFunctions;
 
 public class MainActivity extends FragmentActivity {
 	private FragmentTabHost mTabHost;
