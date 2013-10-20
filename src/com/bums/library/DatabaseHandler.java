@@ -60,7 +60,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 		String CREATE_DEPARTMENT_TABLE = "CREATE TABLE " + TABLE_DEPARTMENT + "("
 				+ KEY_ID + " INTEGER,"
-				+ KEY_DEPARTMENT + " TEXT," 
+				+ KEY_DEPARTMENT + " TEXT, " 
 				+ KEY_GROUP + " TEXT, PRIMARY KEY (" + KEY_ID + "," + KEY_DEPARTMENT + "," + KEY_GROUP + ")" +")";
 		db.execSQL(CREATE_DEPARTMENT_TABLE);
 	}
