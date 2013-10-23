@@ -3,8 +3,21 @@ package com.bums.small;
 import java.util.ArrayList;
 import java.util.Random;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.bums.library.DatabaseHandler;
+import com.bums.library.UserFunctions;
+
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.CalendarContract;
+import android.provider.CalendarContract.Events;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,15 +25,39 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class DetailsFragment extends ListFragment {
-
-	private TextView text;
 	private Context context;
 	private EventAdapter eAdapter;
+	private EventData eventData;
+	private int the_tab;
+	
+	private ArrayList<EventData> eventDataList;
+	private ProgressBar bar;
+	private View v;
+	
+	private static final int CFO = 0;
+	private static final int LOS = 1;
+	private static final int WS = 2;
+	
+	public EventData getEventData() {
+		return eventData;
+	}
+
+	public void setEventData(EventData eventData) {
+		this.eventData = eventData;
+	}
+
+	private static String KEY_SUCCESS = "success";
+	private static String KEY_ERROR = "error";
 
 	public DetailsFragment() {
 		// TODO Auto-generated constructor stub
@@ -42,12 +79,35 @@ public class DetailsFragment extends ListFragment {
 		//if there are no events, load the view without lists
 		//View v = LayoutInflater.from(getActivity()).inflate(R.layout.no_events,
 		//		null);
-		View v = LayoutInflater.from(getActivity()).inflate(R.layout.event_list,
+		v = LayoutInflater.from(getActivity()).inflate(R.layout.event_list,
 				null);
 
+		bar = (ProgressBar) v.findViewById(R.id.progressBar);
+		bar.setVisibility(View.VISIBLE);
+		
 		context = inflater.getContext();
 		eAdapter = new EventAdapter();
 		setListAdapter(eAdapter);
+
+		if (getArguments() != null) {
+			try {
+				String value = getArguments().getString("key");
+				if (value.equals("Christian Family Organization")) {
+					the_tab = CFO;
+					new GetEvents().execute();
+					//load cfo
+				} else if(value.equals("Light of Salvation")) {
+					the_tab = LOS;
+					new GetEvents().execute();
+				} else if (value.equals("Worship Service")) {
+					the_tab = WS;
+					//load ws
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
 		return v;
 	}
 
@@ -61,10 +121,18 @@ public class DetailsFragment extends ListFragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_add:
-			Random r = new Random();
-			int a = r.nextInt(11);
-			EventData ed = new EventData("General Cleaning", "Kent Chapel", "10/20/13", "10:00am", a);
-			eAdapter.addEvent(ed);
+			//			Random r = new Random();
+			//			int a = r.nextInt(11);
+			//			EventData ed = new EventData("General Cleaning", "Kent Chapel", "10/20/13", "10:00am", a);
+			//			eAdapter.addEvent(ed);
+			//			Intent calIntent = new Intent(Intent.ACTION_INSERT);
+			//			calIntent.setType("vnd.android.cursor.item/event");
+			//			calIntent.putExtra(Events.ORGANIZER, "Kadiwa");
+			//			startActivity(calIntent);
+
+			Intent intent = new Intent(getActivity(), AddEvent.class);
+			//startActivityForResult(intent, 2);
+			getParentFragment().startActivityForResult(intent, 2);
 			return true;
 		default:
 			break;
@@ -72,6 +140,149 @@ public class DetailsFragment extends ListFragment {
 
 		return false;
 	}
+	
+	
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == 2) {
+			if(resultCode == MainActivity.RESULT_OK){     
+				eventData = new EventData(data.getStringExtra("title"), data.getStringExtra("location"), 
+						data.getStringExtra("description"), data.getStringExtra("date_from"), 
+						data.getStringExtra("date_to"), data.getStringExtra("time_from"), 
+						data.getStringExtra("time_to"), data.getStringExtra("organization"));
+				new AddEventSync().execute();
+			} 
+			if (resultCode == MainActivity.RESULT_CANCELED) {    
+				//Write your code if there's no result
+			}
+		}
+	}
+	
+	public void getEventInformation(JSONObject json) {
+		eventDataList = new ArrayList<EventData>();
+		try {
+			if (json.getString(KEY_SUCCESS) != null) {
+				String res = json.getString(KEY_SUCCESS);
+				String red = json.getString(KEY_ERROR);
+
+				if(Integer.parseInt(res) == 1) {
+					JSONArray eventJson = json.getJSONArray("events");
+					for (int i = 0; i < eventJson.length(); i++) {
+						JSONObject data = eventJson.getJSONObject(i);
+						String title = data.getString("title");
+						String location = data.getString("location");
+						String description = data.getString("description");
+						String dateFrom = data.getString("dateFrom");
+						String dateTo = data.getString("dateTo");
+						String timeFrom = data.getString("timeFrom");
+						String timeTo = data.getString("timeTo");
+						String organization = data.getString("organization");
+
+						eventDataList.add(new EventData(title, location, 
+								description, dateFrom, 
+								dateTo, timeFrom, 
+								timeTo, organization));
+					}
+				} else if (Integer.parseInt(red) == 4){
+
+				}
+			} 
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private class GetEvents extends AsyncTask<String, String, JSONObject> {
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+		}
+		@Override
+		protected JSONObject doInBackground(String... args) {
+			UserFunctions userFunction = new UserFunctions();
+			JSONObject json = null;
+			if (the_tab == CFO) {
+				json = userFunction.getEvents("Christian Family Organization");	
+			} else if (the_tab == LOS) {
+				json = userFunction.getEvents("Light of Salvation");	
+			}
+			getEventInformation(json);
+			return json;
+		}
+		@Override
+		protected void onPostExecute(JSONObject json) {
+			bar = (ProgressBar) v.findViewById(R.id.progressBar);
+			bar.setVisibility(View.INVISIBLE);
+			
+			try {
+				if (json.getString(KEY_SUCCESS) != null) {
+					String res = json.getString(KEY_SUCCESS);
+					String red = json.getString(KEY_ERROR);
+
+					if(Integer.parseInt(res) == 1) {
+						for (int i = 0; i < eventDataList.size(); i++) {
+							EventData event = eventDataList.get(i);
+							eAdapter.addEvent(event);
+						}
+
+						Toast.makeText(getActivity().getApplicationContext(),
+								"Successfully retrieved organizations", Toast.LENGTH_SHORT).show();
+
+					} else if (Integer.parseInt(red) == 4){
+						Toast.makeText(getActivity().getApplicationContext(),
+								"You have no organization", Toast.LENGTH_SHORT).show();
+					} 
+				} else {
+					Toast.makeText(getActivity().getApplicationContext(),
+							"Error occurred retrieving office", Toast.LENGTH_SHORT).show();
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}}
+	
+	private class AddEventSync extends AsyncTask<String, String, JSONObject> {
+		String id;
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			id = ((MainActivity) getActivity()).getUser().get("id");
+		}
+		@Override
+		protected JSONObject doInBackground(String... args) {
+			UserFunctions userFunction = new UserFunctions();
+			JSONObject json = userFunction.addEvent(id, eventData);
+			return json;
+		}
+		@Override
+		protected void onPostExecute(JSONObject json) {
+			try {
+				if (json.getString(KEY_SUCCESS) != null) {
+					String res = json.getString(KEY_SUCCESS);
+					String red = json.getString(KEY_ERROR);
+
+					if(Integer.parseInt(res) == 1) {
+						eAdapter.addEvent(eventData);
+
+						Toast.makeText(getActivity().getApplicationContext(),
+								"Successfully added organization/department", Toast.LENGTH_SHORT).show();
+
+					} else if (Integer.parseInt(red) == 2){
+						Toast.makeText(getActivity().getApplicationContext(),
+								"You are already in that organization", Toast.LENGTH_SHORT).show();
+					} else if (Integer.parseInt(red) == 3){
+						Toast.makeText(getActivity().getApplicationContext(),
+								"JSON error", Toast.LENGTH_SHORT).show();
+					}
+				} else {
+					Toast.makeText(getActivity().getApplicationContext(),
+							"Error occurred adding department", Toast.LENGTH_SHORT).show();
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}}
 
 	public class EventAdapter extends BaseAdapter {
 		private ArrayList<EventData> eData = new ArrayList<EventData>();
@@ -135,6 +346,10 @@ public class DetailsFragment extends ListFragment {
 		}
 
 	}
+	
+	public void addEventSync() {
+		new AddEventSync().execute();
+	}
 
 	public static class ViewHolder {
 		public ImageView organization;
@@ -146,8 +361,32 @@ public class DetailsFragment extends ListFragment {
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onActivityCreated(savedInstanceState);
+
+		getListView().setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View v, int position,
+					long id) {
+//				int type = eAdapter.getPosition();
+//				switch (type) {
+//				case TYPE_ADDOFFICE:
+//					Intent intent1 = new Intent(getActivity(), ChooseOffice.class);
+//					startActivityForResult(intent1, 1);
+//					break;
+//				case TYPE_DEPARTMENT:
+//					Intent intent = new Intent(getActivity(), ChooseDepartment.class);
+//					startActivityForResult(intent, 1);
+//					break;
+//				case TYPE_D_DETAILS: 
+//					mAdapter.removeDepartment(position);
+//					break;
+//				case TYPE_O_DETAILS: 
+//					mAdapter.removeOffice(position);
+//					break;
+//				}
+
+			}
+		});
 	}
 
 }

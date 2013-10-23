@@ -7,68 +7,72 @@ public class EventData {
 	private String imageLocation;
 	private String title;
 	private String location;
-	private String date;
-	private String time;
-	private int organization;
+	private String description;
+	private String dateFrom;
+	private String dateTo;
+	private String timeFrom;
+	private String timeTo;
+	private String organization;
+	private String department;
 
-	public static final int BINHI = 0;
-	public static final int KADIWA = 1;
-	public static final int BUKLOD = 2;
-	public static final int CHOIR = 3;
-	public static final int OVERSEER = 4;
-	public static final int SCAN = 5;
-	public static final int SECRETARY = 6;
-	public static final int FINANCE = 7;
-	public static final int LOS = 8;
-	public static final int CFO = 9;
-	public static final int WS = 10;
-
-	public EventData(String title, String location, String date, String time) {
+	public static final String BINHI = "Binhi";
+	public static final String KADIWA = "Kadiwa";
+	public static final String BUKLOD = "Buklod";
+	public static final String CHOIR = "Choir";
+	public static final String OVERSEER = "Overseer";
+	public static final String SCAN = "SCAN-I";
+	public static final String SECRETARY = "Secretary";
+	public static final String FINANCE = "Finance";
+	public static final String LOS = "Light of Salvation";
+	public static final String CFO = "Christian Family Organization";
+	public static final String WS = "Worship Service";
+	
+	public EventData(String title, String location, String description,
+			String dateFrom, String dateTo, String timeFrom, String timeTo, String organization) {
 		this.title = title;
 		this.location = location;
-		this.date = date;
-		this.time = time;
-	}
-
-	public EventData(String title, String location, String date, String time, int organization) {
-		this.title = title;
-		this.location = location;
-		this.date = date;
-		this.time = time;
+		this.description = description;
+		this.dateFrom = dateFrom;
+		this.dateTo = dateTo;
+		this.timeFrom = timeFrom;
+		this.timeTo = timeTo;
 		this.organization = organization;
-
-		switch (organization) {
-		case BINHI:
+		
+		if (organization.equals(BINHI))
 			setImage(R.drawable.binhi);
-			break;
-		case KADIWA:
+		else if (organization.equals(KADIWA))
 			setImage(R.drawable.kadiwa);
-			break;
-		case BUKLOD:
+		else if (organization.equals(BUKLOD))
 			setImage(R.drawable.buklod);
-			break;
-		case CHOIR:
+		else if (organization.equals(CHOIR))
 			setImage(R.drawable.choir);
-			break;
-		case OVERSEER:
+		else if (organization.equals(OVERSEER))
 			setImage(R.drawable.overseer);
-			break;
-		case SECRETARY:
+		else if (organization.equals(SECRETARY))
 			setImage(R.drawable.secretary);
-			break;
-		case FINANCE:
+		else if (organization.equals(FINANCE))
 			setImage(R.drawable.finance);
-			break;
-		case LOS:
+		else if (organization.equals(LOS))
 			setImage(R.drawable.los);
-			break;
-		case CFO:
+		else if (organization.equals(CFO))
 			setImage(R.drawable.cfo);
-			break;
-		case WS:
+		else if (organization.equals(WS))
 			setImage(R.drawable.ws);
-			break;
-		}
+		
+		setDepartment(getDepartment(organization));
+	}
+	
+	private String getDepartment(String group) {
+		String theGroup = "";
+		if (group.equals("Buklod") || group.equals("Kadiwa") || group.equals("Binhi")) 
+			theGroup = "Christian Family Organization"; 
+		else if (group.equals("Overseer") || group.equals("Choir") || group.equals("Finance") 
+				|| group.equals("SCAN-I") || group.equals("Secretary") || group.equals("Leadership") || group.equals(WS)) 
+			theGroup = "Worship Service";
+		else if (group.equals("Missionizer") || group.equals(LOS))
+			theGroup = "Light of Salvation";
+		
+		return theGroup;
 	}
 
 	public int getImage() {
@@ -104,26 +108,58 @@ public class EventData {
 	}
 
 	public String getDate() {
-		return date;
+		return dateFrom;
 	}
 
 	public void setDate(String date) {
-		this.date = date;
+		this.dateFrom = date;
 	}
 
 	public String getTime() {
-		return time;
+		return timeFrom;
 	}
 
 	public void setTime(String time) {
-		this.time = time;
+		this.timeFrom = time;
 	}
 
-	public int getOrganization() {
+	public String getOrganization() {
 		return organization;
 	}
 
-	public void setOrganization(int organization) {
+	public void setOrganization(String organization) {
 		this.organization = organization;
+	}
+	
+	public String getDateTo() {
+		return dateTo;
+	}
+
+	public void setDateTo(String dateTo) {
+		this.dateTo = dateTo;
+	}
+
+	public String getTimeTo() {
+		return timeTo;
+	}
+
+	public void setTimeTo(String timeTo) {
+		this.timeTo = timeTo;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(String department) {
+		this.department = department;
 	}
 }

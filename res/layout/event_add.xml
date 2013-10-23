@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/linlayoutButtons"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0" >
+
+        <Button
+            android:id="@+id/btn1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Back" >
+        </Button>
+
+        <Button
+            android:id="@+id/btn2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Next" >
+        </Button>
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scrollview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/event_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/event_location"
+                android:layout_alignParentTop="true"
+                android:layout_alignRight="@+id/event_location"
+                android:layout_marginTop="24dp"
+                android:ems="10"
+                android:hint="Event name" />
+
+            <EditText
+                android:id="@+id/event_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/date_from"
+                android:layout_alignRight="@+id/time_from"
+                android:layout_below="@+id/event_name"
+                android:layout_marginTop="15dp"
+                android:ems="10"
+                android:hint="Location" >
+            </EditText>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:layout_weight="0" >
+
+                <EditText
+                    android:id="@+id/date_from"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/event_location"
+                    android:layout_toLeftOf="@+id/time_from"
+                    android:ems="10"
+                    android:focusable="false"
+                    android:hint="Date from"
+                    android:inputType="date" />
+
+                <EditText
+                    android:id="@+id/date_to"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/date_from"
+                    android:layout_below="@+id/date_from"
+                    android:ems="10"
+                    android:focusable="false"
+                    android:hint="Date to"
+                    android:inputType="date" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:layout_weight="0" >
+
+                <EditText
+                    android:id="@+id/time_from"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:focusable="false"
+                    android:hint="Time from"
+                    android:inputType="time" >
+                </EditText>
+
+                <EditText
+                    android:id="@+id/time_to"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/date_to"
+                    android:layout_alignBottom="@+id/date_to"
+                    android:layout_toRightOf="@+id/date_from"
+                    android:ems="10"
+                    android:focusable="false"
+                    android:hint="Time to"
+                    android:inputType="time" />
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/event_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/date_to"
+                android:layout_alignRight="@+id/time_to"
+                android:layout_below="@+id/date_to"
+                android:layout_marginTop="20dp"
+                android:ems="10"
+                android:hint="Description" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:layout_weight="0" >
+
+                <TextView
+                    android:id="@+id/textView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Organization:"
+                    android:layout_marginLeft="11dp"
+                    android:layout_marginTop="10dp"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <Spinner
+                    android:id="@+id/dropdown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="11dp" >
+
+                </Spinner>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

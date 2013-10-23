@@ -1,5 +1,6 @@
 package com.bums.small;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTabHost;
@@ -39,6 +40,25 @@ public class EventsFragment extends Fragment {
 		mTabHost.addTab(mTabHost.newTabSpec("ws")
 				.setIndicator("Worship Service"), DetailsFragment.class, b);
 		return mTabHost;
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == 2) {
+			if(resultCode == MainActivity.RESULT_OK){     
+				DetailsFragment d = ((DetailsFragment) getChildFragmentManager().findFragmentByTag("cfo"));
+				
+				d.setEventData(
+						new EventData(data.getStringExtra("title"), data.getStringExtra("location"), 
+								data.getStringExtra("description"), data.getStringExtra("date_from"), 
+								data.getStringExtra("date_to"), data.getStringExtra("time_from"), 
+								data.getStringExtra("time_to"), data.getStringExtra("organization")));
+				d.addEventSync();
+			} 
+			if (resultCode == MainActivity.RESULT_CANCELED) {    
+				//Write your code if there's no result
+			}
+		}
 	}
 
 	@Override

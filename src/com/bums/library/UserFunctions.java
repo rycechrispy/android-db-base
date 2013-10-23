@@ -7,12 +7,15 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
+import com.bums.small.EventData;
+
 import android.content.Context;
 
 
 public class UserFunctions {
 
 	private JSONParser jsonParser;
+
 
 	//URL of the PHP API
 	//    private static String loginURL = "http://10.0.2.2/small/";
@@ -23,12 +26,16 @@ public class UserFunctions {
 
 	//private static String loginURL = "http://192.168.1.113:80/small/";
 	//private static String registerURL = "http://192.168.1.113:80/small/";
+	
+	//private static String loginURL = "http://www.incconnect.tk/small/index.php";
+	//private static String registerURL = "http://www.incconnect.tk/small/index.php";
 
-	private static String loginURL = "http://192.168.1.103:80/small/";
-	private static String registerURL = "http://192.168.1.103:80/small/";
+	private static String loginURL = "http://192.168.1.106:80/small/";
+	private static String registerURL = "http://192.168.1.106:80/small/";
 	private static String fashionURL = "https://api.instagram.com/v1/tags/incfashion/media/recent?client_id=a817372926af4107bb256a2036c6015d&count=50";
 
 
+	private static String add_event_tag = "add_event";
 	private static String login_tag = "login";
 	private static String register_tag = "register";
 	private static String store_office_tag = "store_office";
@@ -37,7 +44,7 @@ public class UserFunctions {
 	private static String delete_department_tag = "delete_department";
 	private static String office_tag = "get_offices";
 	private static String department_tag = "get_department";
-
+	private static String events_tag = "get_events";
 
 	// constructor
 	public UserFunctions(){
@@ -60,6 +67,7 @@ public class UserFunctions {
 
 	/**
 	 * Function to  Register
+	 * 
 	 **/
 	public JSONObject registerUser(String username, String password){
 		// Building Parameters
@@ -155,6 +163,32 @@ public class UserFunctions {
 		JSONParser jParser = new JSONParser();
 		JSONObject json = jParser.getJSONFromUrl(url);
 
+		return json;
+	}
+
+	public JSONObject addEvent(String id, EventData eventData) {
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("tag", add_event_tag));
+		params.add(new BasicNameValuePair("id", id));
+		params.add(new BasicNameValuePair("title", eventData.getTitle()));
+		params.add(new BasicNameValuePair("location", eventData.getLocation()));
+		params.add(new BasicNameValuePair("description", eventData.getDescription()));
+		params.add(new BasicNameValuePair("dateFrom", eventData.getDate()));
+		params.add(new BasicNameValuePair("dateTo", eventData.getDateTo()));
+		params.add(new BasicNameValuePair("timeFrom", eventData.getTime()));
+		params.add(new BasicNameValuePair("timeTo", eventData.getTimeTo()));
+		params.add(new BasicNameValuePair("organization", eventData.getOrganization()));
+		params.add(new BasicNameValuePair("department", eventData.getDepartment()));
+		JSONObject json = jsonParser.getJSONFromUrl(registerURL, params);
+		return json;
+	}
+	
+	public JSONObject getEvents(String department) {
+		// Building Parameters
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("tag", events_tag));
+		params.add(new BasicNameValuePair("department", department));
+		JSONObject json = jsonParser.getJSONFromUrl(loginURL, params);
 		return json;
 	}
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="organization_array">
+        <item>Binhi</item>
+        <item>Kadiwa</item>
+        <item>Buklod</item>
+        <item>Choir</item>
+        <item>Overseer</item>
+        <item>SCAN-I</item>
+        <item>Secretary</item>
+        <item>Finance</item>
+        <item>Light of Salvation</item>
+        <item>Christian Family Organization</item>
+        <item>Worship Service</item>
+        <item>All</item>
+    </string-array>
+</resources>
