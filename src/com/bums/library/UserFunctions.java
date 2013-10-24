@@ -24,8 +24,8 @@ public class UserFunctions {
 	//private static String loginURL = "http://192.168.1.141:80/small/";
 	//private static String registerURL = "http://192.168.1.141:80/small/";
 
-	//private static String loginURL = "http://192.168.1.113:80/small/";
-	//private static String registerURL = "http://192.168.1.113:80/small/";
+	//private static String loginURL = "http://192.168.1.115:80/small/";
+	//private static String registerURL = "http://192.168.1.115:80/small/";
 	
 	//private static String loginURL = "http://www.incconnect.tk/small/index.php";
 	//private static String registerURL = "http://www.incconnect.tk/small/index.php";
