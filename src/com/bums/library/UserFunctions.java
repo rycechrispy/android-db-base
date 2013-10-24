@@ -27,11 +27,11 @@ public class UserFunctions {
 	//private static String loginURL = "http://192.168.1.115:80/small/";
 	//private static String registerURL = "http://192.168.1.115:80/small/";
 	
-	//private static String loginURL = "http://www.incconnect.tk/small/index.php";
-	//private static String registerURL = "http://www.incconnect.tk/small/index.php";
+	private static String loginURL = "http://www.incconnect.tk/small/index.php";
+	private static String registerURL = "http://www.incconnect.tk/small/index.php";
 
-	private static String loginURL = "http://192.168.1.106:80/small/";
-	private static String registerURL = "http://192.168.1.106:80/small/";
+	//private static String loginURL = "http://192.168.1.106:80/small/";
+	//private static String registerURL = "http://192.168.1.106:80/small/";
 	private static String fashionURL = "https://api.instagram.com/v1/tags/incfashion/media/recent?client_id=a817372926af4107bb256a2036c6015d&count=50";
 
 

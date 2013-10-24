@@ -71,7 +71,6 @@ public class DetailsFragment extends ListFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		setHasOptionsMenu(true);
 	}
 
 	@Override
@@ -97,13 +96,16 @@ public class DetailsFragment extends ListFragment {
 				String value = getArguments().getString("key");
 				if (value.equals("Christian Family Organization")) {
 					the_tab = CFO;
+					((EventsFragment) getParentFragment()).setTab(CFO);
 					new GetEvents().execute();
 					//load cfo
 				} else if(value.equals("Light of Salvation")) {
 					the_tab = LOS;
+					((EventsFragment) getParentFragment()).setTab(LOS);
 					new GetEvents().execute();
 				} else if (value.equals("Worship Service")) {
 					the_tab = WS;
+					((EventsFragment) getParentFragment()).setTab(WS);
 					new GetEvents().execute();
 				}
 			} catch (Exception e) {
@@ -112,54 +114,6 @@ public class DetailsFragment extends ListFragment {
 		}
 
 		return v;
-	}
-
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.event, menu);
-		super.onCreateOptionsMenu(menu, inflater);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.action_add:
-			//			Random r = new Random();
-			//			int a = r.nextInt(11);
-			//			EventData ed = new EventData("General Cleaning", "Kent Chapel", "10/20/13", "10:00am", a);
-			//			eAdapter.addEvent(ed);
-			//			Intent calIntent = new Intent(Intent.ACTION_INSERT);
-			//			calIntent.setType("vnd.android.cursor.item/event");
-			//			calIntent.putExtra(Events.ORGANIZER, "Kadiwa");
-			//			startActivity(calIntent);
-
-			Intent intent = new Intent(getActivity(), AddEvent.class);
-			//startActivityForResult(intent, 2);
-			getParentFragment().startActivityForResult(intent, 2);
-			return true;
-		default:
-			break;
-		}
-
-		return false;
-	}
-	
-	
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == 2) {
-			if(resultCode == MainActivity.RESULT_OK){     
-				eventData = new EventData(data.getStringExtra("title"), data.getStringExtra("location"), 
-						data.getStringExtra("description"), data.getStringExtra("date_from"), 
-						data.getStringExtra("date_to"), data.getStringExtra("time_from"), 
-						data.getStringExtra("time_to"), data.getStringExtra("organization"));
-				new AddEventSync().execute();
-			} 
-			if (resultCode == MainActivity.RESULT_CANCELED) {    
-				//Write your code if there's no result
-			}
-		}
 	}
 	
 	public void getEventInformation(JSONObject json) {
@@ -236,11 +190,11 @@ public class DetailsFragment extends ListFragment {
 
 					} else if (Integer.parseInt(red) == 4){
 						Toast.makeText(getActivity().getApplicationContext(),
-								"You have no organization", Toast.LENGTH_SHORT).show();
+								"There are no events", Toast.LENGTH_SHORT).show();
 					} 
 				} else {
 					Toast.makeText(getActivity().getApplicationContext(),
-							"Error occurred retrieving office", Toast.LENGTH_SHORT).show();
+							"Error occurred retrieving events", Toast.LENGTH_SHORT).show();
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -268,10 +222,15 @@ public class DetailsFragment extends ListFragment {
 					String red = json.getString(KEY_ERROR);
 
 					if(Integer.parseInt(res) == 1) {
-						eAdapter.addEvent(eventData);
-
+						if (eventData.getDepartment().equals("Christian Family Organization") && the_tab == CFO)
+							eAdapter.addEvent(eventData);
+						else if (eventData.getDepartment().equals("Light of Salvation") && the_tab == LOS)
+							eAdapter.addEvent(eventData);
+						else if (eventData.getDepartment().equals("Worship Service") && the_tab == WS)
+							eAdapter.addEvent(eventData);
+						
 						Toast.makeText(getActivity().getApplicationContext(),
-								"Successfully added organization/department", Toast.LENGTH_SHORT).show();
+								"Successfully added an event", Toast.LENGTH_SHORT).show();
 
 					} else if (Integer.parseInt(red) == 2){
 						Toast.makeText(getActivity().getApplicationContext(),
@@ -389,12 +348,9 @@ public class DetailsFragment extends ListFragment {
 //					mAdapter.removeOffice(position);
 //					break;
 //				}
-				Log.v("Position", String.valueOf(position));
-				Log.v("Event", eventDataList.get(position).getTitle());
 				
 				Intent intent = new Intent(getActivity(), EventDetails.class);
 				intent.putExtra("the_event", eventDataList.get(position));
-				//startActivityForResult(intent, 2);
 				startActivity(intent);
 				
 //				EventDetailsFragment edFragment = new EventDetailsFragment();
