@@ -18,7 +18,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.Events;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -101,7 +104,7 @@ public class DetailsFragment extends ListFragment {
 					new GetEvents().execute();
 				} else if (value.equals("Worship Service")) {
 					the_tab = WS;
-					//load ws
+					new GetEvents().execute();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -206,6 +209,8 @@ public class DetailsFragment extends ListFragment {
 				json = userFunction.getEvents("Christian Family Organization");	
 			} else if (the_tab == LOS) {
 				json = userFunction.getEvents("Light of Salvation");	
+			} else if (the_tab == WS) {
+				json = userFunction.getEvents("Worship Service");	
 			}
 			getEventInformation(json);
 			return json;
@@ -227,7 +232,7 @@ public class DetailsFragment extends ListFragment {
 						}
 
 						Toast.makeText(getActivity().getApplicationContext(),
-								"Successfully retrieved organizations", Toast.LENGTH_SHORT).show();
+								"Successfully retrieved events", Toast.LENGTH_SHORT).show();
 
 					} else if (Integer.parseInt(red) == 4){
 						Toast.makeText(getActivity().getApplicationContext(),
@@ -384,6 +389,26 @@ public class DetailsFragment extends ListFragment {
 //					mAdapter.removeOffice(position);
 //					break;
 //				}
+				Log.v("Position", String.valueOf(position));
+				Log.v("Event", eventDataList.get(position).getTitle());
+				
+				Intent intent = new Intent(getActivity(), EventDetails.class);
+				intent.putExtra("the_event", eventDataList.get(position));
+				//startActivityForResult(intent, 2);
+				startActivity(intent);
+				
+//				EventDetailsFragment edFragment = new EventDetailsFragment();
+//				FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//				// Replace whatever is in the fragment_container view with this fragment,
+//				// and add the transaction to the back stack
+//				
+//				Fragment current = getFragmentManager().findFragmentByTag("cfo");
+//				//((MainActivity) getActivity()).setAccountFragment(current);
+//				transaction.detach(current);
+//				//transaction.replace(((ViewGroup)(getView().getParent())).getId(), departFragment, "office");
+//				transaction.replace(R.id.realtabcontent, edFragment, "details");
+//				// Commit the transaction
+//				transaction.commit();
 
 			}
 		});

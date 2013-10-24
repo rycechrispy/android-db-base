@@ -1,8 +1,9 @@
 package com.bums.small;
 
-import android.graphics.Bitmap;
+import java.io.Serializable;
 
-public class EventData {
+public class EventData implements Serializable {
+	private static final long serialVersionUID = -9175628155796554906L;
 	private int image;
 	private String imageLocation;
 	private String title;

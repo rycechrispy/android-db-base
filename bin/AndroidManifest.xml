@@ -42,6 +42,9 @@
         <activity
             android:name="AddEvent">
         </activity>
+        <activity
+            android:name="EventDetails">
+        </activity>
     </application>
     <!-- Allow to connect with internet and to know the current network state -->
     <uses-permission android:name="android.permission.INTERNET" />
