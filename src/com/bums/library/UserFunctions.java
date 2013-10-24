@@ -26,7 +26,7 @@ public class UserFunctions {
 
 	//private static String loginURL = "http://192.168.1.115:80/small/";
 	//private static String registerURL = "http://192.168.1.115:80/small/";
-	
+
 	private static String loginURL = "http://www.incconnect.tk/small/index.php";
 	private static String registerURL = "http://www.incconnect.tk/small/index.php";
 
@@ -45,6 +45,7 @@ public class UserFunctions {
 	private static String office_tag = "get_offices";
 	private static String department_tag = "get_department";
 	private static String events_tag = "get_events";
+	private static String user_events_tag = "get_user_events";
 
 	// constructor
 	public UserFunctions(){
@@ -182,12 +183,21 @@ public class UserFunctions {
 		JSONObject json = jsonParser.getJSONFromUrl(registerURL, params);
 		return json;
 	}
-	
+
 	public JSONObject getEvents(String department) {
 		// Building Parameters
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("tag", events_tag));
 		params.add(new BasicNameValuePair("department", department));
+		JSONObject json = jsonParser.getJSONFromUrl(loginURL, params);
+		return json;
+	}
+
+	public JSONObject getUserEvents(String id) {
+		// Building Parameters
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("tag", user_events_tag));
+		params.add(new BasicNameValuePair("id", id));
 		JSONObject json = jsonParser.getJSONFromUrl(loginURL, params);
 		return json;
 	}

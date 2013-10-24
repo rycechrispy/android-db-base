@@ -33,17 +33,17 @@ public class EventsFragment extends Fragment {
 		Bundle b = new Bundle();
 		b.putString("key", "Christian Family Organization");
 		mTabHost.addTab(mTabHost.newTabSpec("cfo").setIndicator("Christian Family Organization"),
-				DetailsFragment.class, b);
+				EventList.class, b);
 		
 		b = new Bundle();
 		b.putString("key", "Light of Salvation");
 		mTabHost.addTab(mTabHost.newTabSpec("los")
-				.setIndicator("Light of Salvation"), DetailsFragment.class, b);
+				.setIndicator("Light of Salvation"), EventList.class, b);
 		
 		b = new Bundle();
 		b.putString("key", "Worship Service");
 		mTabHost.addTab(mTabHost.newTabSpec("ws")
-				.setIndicator("Worship Service"), DetailsFragment.class, b);
+				.setIndicator("Worship Service"), EventList.class, b);
 		return mTabHost;
 	}
 	
@@ -51,13 +51,13 @@ public class EventsFragment extends Fragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == 2) {
 			if(resultCode == MainActivity.RESULT_OK){ 
-				DetailsFragment d = null;
+				EventList d = null;
 				if (the_tab == 0) 
-					d = ((DetailsFragment) getChildFragmentManager().findFragmentByTag("cfo"));
+					d = ((EventList) getChildFragmentManager().findFragmentByTag("cfo"));
 				else if (the_tab == 1) 
-					d = ((DetailsFragment) getChildFragmentManager().findFragmentByTag("los"));
+					d = ((EventList) getChildFragmentManager().findFragmentByTag("los"));
 				else if (the_tab == 2) 
-					d = ((DetailsFragment) getChildFragmentManager().findFragmentByTag("ws"));
+					d = ((EventList) getChildFragmentManager().findFragmentByTag("ws"));
 				
 				d.setEventData(
 						new EventData(data.getStringExtra("title"), data.getStringExtra("location"), 

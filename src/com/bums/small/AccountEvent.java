@@ -1,55 +1,37 @@
 package com.bums.small;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.bums.library.DatabaseHandler;
-import com.bums.library.UserFunctions;
-
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.CalendarContract;
-import android.provider.CalendarContract.Events;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
-public class DetailsFragment extends ListFragment {
+import com.bums.library.UserFunctions;
+
+public class AccountEvent extends ListFragment {
 	private Context context;
 	private EventAdapter eAdapter;
 	private EventData eventData;
-	private int the_tab;
 	
 	private ArrayList<EventData> eventDataList;
 	private ProgressBar bar;
 	private View v;
-	
-	private static final int CFO = 0;
-	private static final int LOS = 1;
-	private static final int WS = 2;
 	
 	public EventData getEventData() {
 		return eventData;
@@ -61,11 +43,7 @@ public class DetailsFragment extends ListFragment {
 
 	private static String KEY_SUCCESS = "success";
 	private static String KEY_ERROR = "error";
-
-	public DetailsFragment() {
-		// TODO Auto-generated constructor stub
-
-	}
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -91,27 +69,7 @@ public class DetailsFragment extends ListFragment {
 		eAdapter = new EventAdapter();
 		setListAdapter(eAdapter);
 
-		if (getArguments() != null) {
-			try {
-				String value = getArguments().getString("key");
-				if (value.equals("Christian Family Organization")) {
-					the_tab = CFO;
-					((EventsFragment) getParentFragment()).setTab(CFO);
-					new GetEvents().execute();
-					//load cfo
-				} else if(value.equals("Light of Salvation")) {
-					the_tab = LOS;
-					((EventsFragment) getParentFragment()).setTab(LOS);
-					new GetEvents().execute();
-				} else if (value.equals("Worship Service")) {
-					the_tab = WS;
-					((EventsFragment) getParentFragment()).setTab(WS);
-					new GetEvents().execute();
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+		new GetEvents().execute();
 
 		return v;
 	}
@@ -151,21 +109,16 @@ public class DetailsFragment extends ListFragment {
 	}
 	
 	private class GetEvents extends AsyncTask<String, String, JSONObject> {
+		private String id;
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
+			id = ((MainActivity) getActivity()).getUser().get("id");
 		}
 		@Override
 		protected JSONObject doInBackground(String... args) {
 			UserFunctions userFunction = new UserFunctions();
-			JSONObject json = null;
-			if (the_tab == CFO) {
-				json = userFunction.getEvents("Christian Family Organization");	
-			} else if (the_tab == LOS) {
-				json = userFunction.getEvents("Light of Salvation");	
-			} else if (the_tab == WS) {
-				json = userFunction.getEvents("Worship Service");	
-			}
+			JSONObject json = userFunction.getUserEvents(id);	
 			getEventInformation(json);
 			return json;
 		}
@@ -195,53 +148,6 @@ public class DetailsFragment extends ListFragment {
 				} else {
 					Toast.makeText(getActivity().getApplicationContext(),
 							"Error occurred retrieving events", Toast.LENGTH_SHORT).show();
-				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}}
-	
-	private class AddEventSync extends AsyncTask<String, String, JSONObject> {
-		String id;
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			id = ((MainActivity) getActivity()).getUser().get("id");
-		}
-		@Override
-		protected JSONObject doInBackground(String... args) {
-			UserFunctions userFunction = new UserFunctions();
-			JSONObject json = userFunction.addEvent(id, eventData);
-			return json;
-		}
-		@Override
-		protected void onPostExecute(JSONObject json) {
-			try {
-				if (json.getString(KEY_SUCCESS) != null) {
-					String res = json.getString(KEY_SUCCESS);
-					String red = json.getString(KEY_ERROR);
-
-					if(Integer.parseInt(res) == 1) {
-						if (eventData.getDepartment().equals("Christian Family Organization") && the_tab == CFO)
-							eAdapter.addEvent(eventData);
-						else if (eventData.getDepartment().equals("Light of Salvation") && the_tab == LOS)
-							eAdapter.addEvent(eventData);
-						else if (eventData.getDepartment().equals("Worship Service") && the_tab == WS)
-							eAdapter.addEvent(eventData);
-						
-						Toast.makeText(getActivity().getApplicationContext(),
-								"Successfully added an event", Toast.LENGTH_SHORT).show();
-
-					} else if (Integer.parseInt(red) == 2){
-						Toast.makeText(getActivity().getApplicationContext(),
-								"You are already in that organization", Toast.LENGTH_SHORT).show();
-					} else if (Integer.parseInt(red) == 3){
-						Toast.makeText(getActivity().getApplicationContext(),
-								"JSON error", Toast.LENGTH_SHORT).show();
-					}
-				} else {
-					Toast.makeText(getActivity().getApplicationContext(),
-							"Error occurred adding department", Toast.LENGTH_SHORT).show();
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -310,10 +216,6 @@ public class DetailsFragment extends ListFragment {
 		}
 
 	}
-	
-	public void addEventSync() {
-		new AddEventSync().execute();
-	}
 
 	public static class ViewHolder {
 		public ImageView organization;
@@ -331,40 +233,10 @@ public class DetailsFragment extends ListFragment {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View v, int position,
 					long id) {
-//				int type = eAdapter.getPosition();
-//				switch (type) {
-//				case TYPE_ADDOFFICE:
-//					Intent intent1 = new Intent(getActivity(), ChooseOffice.class);
-//					startActivityForResult(intent1, 1);
-//					break;
-//				case TYPE_DEPARTMENT:
-//					Intent intent = new Intent(getActivity(), ChooseDepartment.class);
-//					startActivityForResult(intent, 1);
-//					break;
-//				case TYPE_D_DETAILS: 
-//					mAdapter.removeDepartment(position);
-//					break;
-//				case TYPE_O_DETAILS: 
-//					mAdapter.removeOffice(position);
-//					break;
-//				}
-				
+
 				Intent intent = new Intent(getActivity(), EventDetails.class);
 				intent.putExtra("the_event", eventDataList.get(position));
 				startActivity(intent);
-				
-//				EventDetailsFragment edFragment = new EventDetailsFragment();
-//				FragmentTransaction transaction = getFragmentManager().beginTransaction();
-//				// Replace whatever is in the fragment_container view with this fragment,
-//				// and add the transaction to the back stack
-//				
-//				Fragment current = getFragmentManager().findFragmentByTag("cfo");
-//				//((MainActivity) getActivity()).setAccountFragment(current);
-//				transaction.detach(current);
-//				//transaction.replace(((ViewGroup)(getView().getParent())).getId(), departFragment, "office");
-//				transaction.replace(R.id.realtabcontent, edFragment, "details");
-//				// Commit the transaction
-//				transaction.commit();
 
 			}
 		});
