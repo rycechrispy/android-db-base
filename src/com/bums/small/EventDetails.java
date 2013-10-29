@@ -39,15 +39,15 @@ public class EventDetails extends FragmentActivity {
 		organization.setText(event.getOrganization());
 		department.setText(event.getDepartment());
 		location.setText(event.getLocation());
-		if (event.getDate().equals(event.getDateTo())) 
-			date.setText(event.getDate());
+		if (event.getDateFrom().equals(event.getDateTo())) 
+			date.setText(event.getRegularDateFrom());
 		else 
-			date.setText(event.getDate() + " to " + event.getDateTo());
+			date.setText(event.getRegularDateFrom() + " to " + event.getRegularDateTo());
 		
-		if (event.getTime().equals(event.getTimeTo())) 
-			time.setText(event.getTime());
+		if (event.getTimeFrom().equals(event.getTimeTo())) 
+			time.setText(event.getRegularTimeFrom());
 		else 
-			time.setText(event.getTime() + " to " + event.getTimeTo());
+			time.setText(event.getRegularTimeFrom() + " to " + event.getRegularTimeTo());
 		description.setText(event.getDescription());
 		
 		final Button back = (Button) findViewById(R.id.btn1);

@@ -50,9 +50,6 @@ public class AccountList extends ListFragment {
 	private JSONArray departmentJson;
 	private String id;
 
-	public AccountList() {
-	}
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -63,7 +60,8 @@ public class AccountList extends ListFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		View v = inflater.inflate(R.layout.account_list, container, false);
+		View v = LayoutInflater.from(getActivity()).inflate(R.layout.account_list,
+				null);
 		
 		id = ((MainActivity) getActivity()).getUser().get("id");
 		context = inflater.getContext();
@@ -104,46 +102,37 @@ public class AccountList extends ListFragment {
 	public void setmAdapter(MyCustomAdapter mAdapter) {
 		setListAdapter(mAdapter);
 	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == 1) {
-			if(resultCode == MainActivity.RESULT_OK){     
-				choose = data.getStringExtra("choose");
-				if (choose.equals("choose_department")) {
-					group = data.getStringExtra("group");
-					department = data.getStringExtra("department"); 
-					DatabaseHandler db = new DatabaseHandler(getActivity().getApplicationContext());
-					if (db.addDepartment(id, group, department)) {
-						mAdapter.addDepartmentDetails(group, department);
-					} else {
-						Toast.makeText(getActivity().getApplicationContext(),
-								"You are already that officer", Toast.LENGTH_SHORT).show();
-					}
-					//storeDepartmentASync();
-					//if (((MainActivity) getActivity()).isDepartmentUnique())
-					//mAdapter.addDepartmentDetails(group, department);
-					
-				} else if (choose.equals("choose_office")) {
-					office = data.getStringExtra("office");
-					isLeaderBool = data.getBooleanExtra("isLeader", false);
-					isLeader = "Officer";
-					if (isLeaderBool) {
-						isLeader = "Leadership";
-					}
-					DatabaseHandler db = new DatabaseHandler(getActivity().getApplicationContext());
-					if (db.addOffice(id, office, isLeader)) {
-						mAdapter.addOfficeDetails(office, isLeader);
-					} else {
-						Toast.makeText(getActivity().getApplicationContext(),
-								"You are already that officer", Toast.LENGTH_SHORT).show();
-					}
-					//storeOfficeASync();
-				}
-			} 
-			if (resultCode == MainActivity.RESULT_CANCELED) {    
-				//Write your code if there's no result
+	
+	public void setChoose(Intent data) {
+		choose = data.getStringExtra("choose");
+		if (choose.equals("choose_department")) {
+			group = data.getStringExtra("group");
+			department = data.getStringExtra("department"); 
+			DatabaseHandler db = new DatabaseHandler(getActivity().getApplicationContext());
+			if (db.addDepartment(id, group, department)) {
+				mAdapter.addDepartmentDetails(group, department);
+			} else {
+				Toast.makeText(getActivity().getApplicationContext(),
+						"You are already that officer", Toast.LENGTH_SHORT).show();
 			}
+			//storeDepartmentASync();
+			//if (((MainActivity) getActivity()).isDepartmentUnique())
+			//mAdapter.addDepartmentDetails(group, department);
+		} else if (choose.equals("choose_office")) {
+			office = data.getStringExtra("office");
+			isLeaderBool = data.getBooleanExtra("isLeader", false);
+			isLeader = "Officer";
+			if (isLeaderBool) {
+				isLeader = "Leadership";
+			}
+			DatabaseHandler db = new DatabaseHandler(getActivity().getApplicationContext());
+			if (db.addOffice(id, office, isLeader)) {
+				mAdapter.addOfficeDetails(office, isLeader);
+			} else {
+				Toast.makeText(getActivity().getApplicationContext(),
+						"You are already that officer", Toast.LENGTH_SHORT).show();
+			}
+			//storeOfficeASync();
 		}
 	}
 
@@ -158,12 +147,12 @@ public class AccountList extends ListFragment {
 				int type = mAdapter.getPosition().get(position);
 				switch (type) {
 				case TYPE_ADDOFFICE:
-					Intent intent1 = new Intent(getActivity(), ChooseOffice.class);
-					startActivityForResult(intent1, 1);
+					Intent intent2 = new Intent(getActivity(), ChooseOffice.class);
+					getActivity().startActivityForResult(intent2, 3);
 					break;
 				case TYPE_DEPARTMENT:
 					Intent intent = new Intent(getActivity(), ChooseDepartment.class);
-					startActivityForResult(intent, 1);
+					startActivityForResult(intent, 3);
 					break;
 				case TYPE_D_DETAILS: 
 					mAdapter.removeDepartment(position);

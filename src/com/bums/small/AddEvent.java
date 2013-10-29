@@ -70,13 +70,35 @@ public class AddEvent extends FragmentActivity implements OnItemSelectedListener
 				mTimePicker = new TimePickerDialog(AddEvent.this, new TimePickerDialog.OnTimeSetListener() {
 					@Override
 					public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-						timeFromSQL = selectedHour + ":" + selectedMinute + ":00";
-						String time = "AM";
-						if (selectedHour > 12) {
-							selectedHour -= 12;
-							time = "PM";
+						if (selectedHour < 10) {
+							if (selectedMinute < 10) {
+								timeFromSQL = "0" + selectedHour + ":0" + selectedMinute + ":00";
+							} else {
+								timeFromSQL = "0" + selectedHour + ":" + selectedMinute + ":00";
+							}
+						} else {
+							if (selectedMinute < 10) {
+								timeFromSQL = selectedHour + ":0" + selectedMinute + ":00";
+							} else {
+								timeFromSQL = selectedHour + ":" + selectedMinute + ":00";
+							}
 						}
-						timeFrom.setText( selectedHour + ":" + selectedMinute + " " + time);
+						
+						String time = "am";
+						if (selectedHour == 0) {
+							selectedHour = 12;
+							time = "am";
+						} else if (selectedHour == 12) {
+							time = "pm";
+						} else if (selectedHour > 12) {
+							selectedHour -= 12;
+							time = "pm";
+						}
+						if (selectedMinute < 10) {
+							timeFrom.setText( selectedHour + ":0" + selectedMinute + time);
+						} else {
+							timeFrom.setText( selectedHour + ":" + selectedMinute + time);
+						}
 					} 
 				}, hour, minute, false);
 				mTimePicker.setTitle("Select Time");
@@ -94,13 +116,35 @@ public class AddEvent extends FragmentActivity implements OnItemSelectedListener
 				mTimePicker = new TimePickerDialog(AddEvent.this, new TimePickerDialog.OnTimeSetListener() {
 					@Override
 					public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-						timeToSQL = selectedHour + ":" + selectedMinute + ":00";
-						String time = "AM";
-						if (selectedHour > 12) {
-							selectedHour -= 12;
-							time = "PM";
+						if (selectedHour < 10) {
+							if (selectedMinute < 10) {
+								timeToSQL = "0" + selectedHour + ":0" + selectedMinute + ":00";
+							} else {
+								timeToSQL = "0" + selectedHour + ":" + selectedMinute + ":00";
+							}
+						} else {
+							if (selectedMinute < 10) {
+								timeToSQL = selectedHour + ":0" + selectedMinute + ":00";
+							} else {
+								timeToSQL = selectedHour + ":" + selectedMinute + ":00";
+							}
 						}
-						timeTo.setText( selectedHour + ":" + selectedMinute + " " + time);
+						
+						String time = "am";
+						if (selectedHour == 0) {
+							selectedHour = 12;
+							time = "am";
+						} else if (selectedHour == 12) {
+							time = "pm";
+						} else if (selectedHour > 12) {
+							selectedHour -= 12;
+							time = "pm";
+						}
+						if (selectedMinute < 10) {
+							timeTo.setText( selectedHour + ":0" + selectedMinute + time);
+						} else {
+							timeTo.setText( selectedHour + ":" + selectedMinute + time);
+						}
 					}
 				}, hour, minute, false);
 				mTimePicker.setTitle("Select Time");
@@ -149,6 +193,8 @@ public class AddEvent extends FragmentActivity implements OnItemSelectedListener
 		back.setText("Cancel");
 		back.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
+				Intent returnIntent = new Intent();
+				setResult(RESULT_CANCELED, returnIntent);
 				finish();
 			}
 		});
@@ -157,25 +203,26 @@ public class AddEvent extends FragmentActivity implements OnItemSelectedListener
 		finish.setText("Add Event");
 		finish.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-//				if (title.getText().toString().equals("")) {
-//					Toast.makeText(getApplicationContext(),
-//							"Please enter an event title", Toast.LENGTH_SHORT).show();
-//				} else if (location.getText().toString().equals("")) {
-//					Toast.makeText(getApplicationContext(),
-//							"Please enter a location", Toast.LENGTH_SHORT).show();
-//				} else if (dateFrom.getText().toString().equals("")) {
-//					Toast.makeText(getApplicationContext(),
-//							"Please enter the first field for the date", Toast.LENGTH_SHORT).show();
-//				} else if (timeFrom.getText().toString().equals("")) {
-//					Toast.makeText(getApplicationContext(),
-//							"Please enter the first field for the time", Toast.LENGTH_SHORT).show();
-//				} else {
-//					
-//					if (timeTo.getText().toString().equals("")) {
-//						timeToSQL = timeFromSQL;
-//					} else if (dateTo.getText().toString().equals("")) {
-//						dateToSQL = dateFromSQL;
-//					}
+				if (title.getText().toString().equals("")) {
+					Toast.makeText(getApplicationContext(),
+							"Please enter an event title", Toast.LENGTH_SHORT).show();
+				} else if (location.getText().toString().equals("")) {
+					Toast.makeText(getApplicationContext(),
+							"Please enter a location", Toast.LENGTH_SHORT).show();
+				} else if (dateFrom.getText().toString().equals("")) {
+					Toast.makeText(getApplicationContext(),
+							"Please enter the first field for the date", Toast.LENGTH_SHORT).show();
+				} else if (timeFrom.getText().toString().equals("")) {
+					Toast.makeText(getApplicationContext(),
+							"Please enter the first field for the time", Toast.LENGTH_SHORT).show();
+				} else {
+					
+					if (timeTo.getText().toString().equals("")) {
+						timeToSQL = timeFromSQL;
+					} 
+					if (dateTo.getText().toString().equals("")) {
+						dateToSQL = dateFromSQL;
+					}
 					
 					Intent returnIntent = new Intent();
 					returnIntent.putExtra("title", title.getText().toString());
@@ -188,7 +235,7 @@ public class AddEvent extends FragmentActivity implements OnItemSelectedListener
 					returnIntent.putExtra("organization", organization);
 					setResult(RESULT_OK, returnIntent);
 					finish();
-//				}
+				}
 			}
 		});
 	}
@@ -200,7 +247,7 @@ public class AddEvent extends FragmentActivity implements OnItemSelectedListener
 	}
 
 	private void updateLabel(EditText date) {
-		String myFormat = "MM/dd/yy"; //In which you need put here
+		String myFormat = "MM-dd-yy"; //In which you need put here
 		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 		date.setText(sdf.format(myCalendar.getTime()));
 	}

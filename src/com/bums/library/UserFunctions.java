@@ -46,7 +46,9 @@ public class UserFunctions {
 	private static String department_tag = "get_department";
 	private static String events_tag = "get_events";
 	private static String user_events_tag = "get_user_events";
-
+	private static String delete_event_tag = "delete_event";
+	private static String update_event_tag = "update_event";
+	
 	// constructor
 	public UserFunctions(){
 		jsonParser = new JSONParser();
@@ -121,6 +123,16 @@ public class UserFunctions {
 		JSONObject json = jsonParser.getJSONFromUrl(registerURL, params);
 		return json;
 	}
+	
+	public JSONObject deleteEvent(String id, String title){
+		// Building Parameters
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("tag", delete_event_tag));
+		params.add(new BasicNameValuePair("id", id));
+		params.add(new BasicNameValuePair("title", title));
+		JSONObject json = jsonParser.getJSONFromUrl(registerURL, params);
+		return json;
+	}
 
 	public JSONObject getOffices(String id){
 		// Building Parameters
@@ -174,12 +186,30 @@ public class UserFunctions {
 		params.add(new BasicNameValuePair("title", eventData.getTitle()));
 		params.add(new BasicNameValuePair("location", eventData.getLocation()));
 		params.add(new BasicNameValuePair("description", eventData.getDescription()));
-		params.add(new BasicNameValuePair("dateFrom", eventData.getDate()));
+		params.add(new BasicNameValuePair("dateFrom", eventData.getDateFrom()));
 		params.add(new BasicNameValuePair("dateTo", eventData.getDateTo()));
-		params.add(new BasicNameValuePair("timeFrom", eventData.getTime()));
+		params.add(new BasicNameValuePair("timeFrom", eventData.getTimeFrom()));
 		params.add(new BasicNameValuePair("timeTo", eventData.getTimeTo()));
 		params.add(new BasicNameValuePair("organization", eventData.getOrganization()));
 		params.add(new BasicNameValuePair("department", eventData.getDepartment()));
+		JSONObject json = jsonParser.getJSONFromUrl(registerURL, params);
+		return json;
+	}
+	
+	public JSONObject updateEvent(String id, EventData eventData, String prevTitle) {
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("tag", update_event_tag));
+		params.add(new BasicNameValuePair("id", id));
+		params.add(new BasicNameValuePair("title", eventData.getTitle()));
+		params.add(new BasicNameValuePair("location", eventData.getLocation()));
+		params.add(new BasicNameValuePair("description", eventData.getDescription()));
+		params.add(new BasicNameValuePair("dateFrom", eventData.getDateFrom()));
+		params.add(new BasicNameValuePair("dateTo", eventData.getDateTo()));
+		params.add(new BasicNameValuePair("timeFrom", eventData.getTimeFrom()));
+		params.add(new BasicNameValuePair("timeTo", eventData.getTimeTo()));
+		params.add(new BasicNameValuePair("organization", eventData.getOrganization()));
+		params.add(new BasicNameValuePair("department", eventData.getDepartment()));
+		params.add(new BasicNameValuePair("prevTitle", prevTitle));
 		JSONObject json = jsonParser.getJSONFromUrl(registerURL, params);
 		return json;
 	}

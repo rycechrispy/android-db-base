@@ -1,6 +1,7 @@
 package com.bums.small;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +29,9 @@ public class AccountEvent extends ListFragment {
 	private Context context;
 	private EventAdapter eAdapter;
 	private EventData eventData;
+	private String title;
+	private String prevTitle;
+	private int position;
 	
 	private ArrayList<EventData> eventDataList;
 	private ProgressBar bar;
@@ -40,6 +44,8 @@ public class AccountEvent extends ListFragment {
 	public void setEventData(EventData eventData) {
 		this.eventData = eventData;
 	}
+	
+	
 
 	private static String KEY_SUCCESS = "success";
 	private static String KEY_ERROR = "error";
@@ -47,14 +53,12 @@ public class AccountEvent extends ListFragment {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 
 		//if there are no events, load the view without lists
 		//View v = LayoutInflater.from(getActivity()).inflate(R.layout.no_events,
@@ -108,6 +112,96 @@ public class AccountEvent extends ListFragment {
 		}
 	}
 	
+	public void deleteEventSync() {
+		new DeleteEvent().execute();
+	}
+	
+	public void updateEventSync() {
+		new UpdateEvent().execute();
+	}
+	
+	private class UpdateEvent extends AsyncTask<String, String, JSONObject> {
+		private String id;
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			id = ((MainActivity) getActivity()).getUser().get("id");
+		}
+		@Override
+		protected JSONObject doInBackground(String... args) {
+			UserFunctions userFunction = new UserFunctions();
+			JSONObject json = userFunction.updateEvent(id, eventData, prevTitle);	
+			return json;
+		}
+		@Override
+		protected void onPostExecute(JSONObject json) {
+			try {
+				if (json.getString(KEY_SUCCESS) != null) {
+					String res = json.getString(KEY_SUCCESS);
+					String red = json.getString(KEY_ERROR);
+
+					if(Integer.parseInt(res) == 1) {
+						eAdapter.updateEvent(getPosition(), eventData);
+						eventDataList.set(getPosition(), eventData);
+						Collections.sort(eventDataList);
+
+						Toast.makeText(getActivity().getApplicationContext(),
+								"Successfully updated event", Toast.LENGTH_SHORT).show();
+
+					} else if (Integer.parseInt(red) == 4){
+						Toast.makeText(getActivity().getApplicationContext(),
+								"There are no events", Toast.LENGTH_SHORT).show();
+					} 
+				} else {
+					Toast.makeText(getActivity().getApplicationContext(),
+							"Error occurred retrieving events", Toast.LENGTH_SHORT).show();
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}}
+	
+	private class DeleteEvent extends AsyncTask<String, String, JSONObject> {
+		private String id;
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			id = ((MainActivity) getActivity()).getUser().get("id");
+		}
+		@Override
+		protected JSONObject doInBackground(String... args) {
+			UserFunctions userFunction = new UserFunctions();
+			JSONObject json = userFunction.deleteEvent(id, title);	
+			return json;
+		}
+		@Override
+		protected void onPostExecute(JSONObject json) {
+			try {
+				if (json.getString(KEY_SUCCESS) != null) {
+					String res = json.getString(KEY_SUCCESS);
+					String red = json.getString(KEY_ERROR);
+
+					if(Integer.parseInt(res) == 1) {
+						eAdapter.deleteEvent(getPosition());
+						eventDataList.remove(getPosition());
+						Collections.sort(eventDataList);
+
+						Toast.makeText(getActivity().getApplicationContext(),
+								"Successfully removed event", Toast.LENGTH_SHORT).show();
+
+					} else if (Integer.parseInt(red) == 4){
+						Toast.makeText(getActivity().getApplicationContext(),
+								"There are no events", Toast.LENGTH_SHORT).show();
+					} 
+				} else {
+					Toast.makeText(getActivity().getApplicationContext(),
+							"Error occurred retrieving events", Toast.LENGTH_SHORT).show();
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}}
+	
 	private class GetEvents extends AsyncTask<String, String, JSONObject> {
 		private String id;
 		@Override
@@ -137,6 +231,7 @@ public class AccountEvent extends ListFragment {
 							EventData event = eventDataList.get(i);
 							eAdapter.addEvent(event);
 						}
+						Collections.sort(eventDataList);
 
 						Toast.makeText(getActivity().getApplicationContext(),
 								"Successfully retrieved events", Toast.LENGTH_SHORT).show();
@@ -168,11 +263,20 @@ public class AccountEvent extends ListFragment {
 
 		public void addEvent(EventData data) {
 			eData.add(data); //can get the organization by calling getOrganization
+			Collections.sort(eData);
 			notifyDataSetChanged();
 		}
 
-		public void removeOffice(int position) {
-
+		public void deleteEvent(int position) {
+			eData.remove(position);
+			Collections.sort(eData);
+			notifyDataSetChanged();
+		}
+		
+		public void updateEvent(int position, EventData data) {
+			eData.set(position, data);
+			Collections.sort(eData);
+			notifyDataSetChanged();
 		}
 
 		@Override
@@ -209,8 +313,8 @@ public class AccountEvent extends ListFragment {
 			holder.organization.setImageResource(eData.get(position).getImage());
 			holder.title.setText(eData.get(position).getTitle());
 			holder.location.setText(eData.get(position).getLocation());
-			holder.date.setText(eData.get(position).getDate());
-			holder.time.setText(eData.get(position).getTime());
+			holder.date.setText(eData.get(position).getRegularDateFrom());
+			holder.time.setText(eData.get(position).getRegularTimeFrom());
 
 			return convertView;
 		}
@@ -234,12 +338,37 @@ public class AccountEvent extends ListFragment {
 			public void onItemClick(AdapterView<?> parent, View v, int position,
 					long id) {
 
-				Intent intent = new Intent(getActivity(), EventDetails.class);
+				Intent intent = new Intent(getActivity(), EditEvent.class);
 				intent.putExtra("the_event", eventDataList.get(position));
-				startActivity(intent);
+				intent.putExtra("position", position);
+				getActivity().startActivityForResult(intent, 1);
 
 			}
 		});
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public int getPosition() {
+		return position;
+	}
+
+	public void setPosition(int position) {
+		this.position = position;
+	}
+
+	public String getPrevTitle() {
+		return prevTitle;
+	}
+
+	public void setPrevTitle(String prevTitle) {
+		this.prevTitle = prevTitle;
 	}
 
 }

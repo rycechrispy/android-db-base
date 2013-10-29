@@ -1,5 +1,7 @@
 package com.bums.small;
 
+import com.bums.library.DatabaseHandler;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,11 +12,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 
 public class AccountFragment extends Fragment {
 	private FragmentTabHost mTabHost;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -28,72 +31,44 @@ public class AccountFragment extends Fragment {
 		mTabHost = new FragmentTabHost(getActivity());
 		mTabHost.setup(getActivity(), getChildFragmentManager(),
 				R.id.menu_settings);
-		
+
 		Bundle b = new Bundle();
 		b.putString("key", "accountlist");
-		mTabHost.addTab(mTabHost.newTabSpec("details").setIndicator("Details"),
+		mTabHost.addTab(mTabHost.newTabSpec("accountlist").setIndicator("Details"),
 				AccountList.class, b);
-		
+
 		b = new Bundle();
 		b.putString("key", "accountevents");
 		mTabHost.addTab(mTabHost.newTabSpec("accountevents")
 				.setIndicator("My Events"), AccountEvent.class, b);
 		return mTabHost;
 	}
-	
+
 //	@Override
 //	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//		if (requestCode == 2) {
+//		if (requestCode == 1) {
 //			if(resultCode == MainActivity.RESULT_OK){ 
-////				EventList d = null;
-////				if (the_tab == 0) 
-////					d = ((EventList) getChildFragmentManager().findFragmentByTag("cfo"));
-////				else if (the_tab == 1) 
-////					d = ((EventList) getChildFragmentManager().findFragmentByTag("los"));
-////				else if (the_tab == 2) 
-////					d = ((EventList) getChildFragmentManager().findFragmentByTag("ws"));
-////				
-////				d.setEventData(
-////						new EventData(data.getStringExtra("title"), data.getStringExtra("location"), 
-////								data.getStringExtra("description"), data.getStringExtra("date_from"), 
-////								data.getStringExtra("date_to"), data.getStringExtra("time_from"), 
-////								data.getStringExtra("time_to"), data.getStringExtra("organization")));
-////				d.addEventSync();
+//				AccountEvent d = null;
+//				d = ((AccountEvent) getChildFragmentManager().findFragmentByTag("accountevents"));
+//				String updateOrDelete = data.getStringExtra("update_or_delete");
+//				d.setPosition(data.getIntExtra("position", 0));
+//				if (updateOrDelete.equals("delete")) {
+//					d.setTitle(data.getStringExtra("title"));
+//					d.deleteEventSync();
+//				} else {
+//					d.setEventData(
+//							new EventData(data.getStringExtra("title"), data.getStringExtra("location"), 
+//									data.getStringExtra("description"), data.getStringExtra("date_from"), 
+//									data.getStringExtra("date_to"), data.getStringExtra("time_from"), 
+//									data.getStringExtra("time_to"), data.getStringExtra("organization")));
+//					d.setPrevTitle(data.getStringExtra("prevTitle"));
+//					d.updateEventSync();
+//				}
 //			} 
 //			if (resultCode == MainActivity.RESULT_CANCELED) {    
 //				//Write your code if there's no result
 //			}
 //		}
-//	}
-//	
-//	@Override
-//	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//		inflater.inflate(R.menu.event, menu);
-//		//super.onCreateOptionsMenu(menu, inflater);
-//	}
-//
-//	@Override
-//	public boolean onOptionsItemSelected(MenuItem item) {
-//		switch (item.getItemId()) {
-//		case R.id.action_add:
-//			//			Random r = new Random();
-//			//			int a = r.nextInt(11);
-//			//			EventData ed = new EventData("General Cleaning", "Kent Chapel", "10/20/13", "10:00am", a);
-//			//			eAdapter.addEvent(ed);
-//			//			Intent calIntent = new Intent(Intent.ACTION_INSERT);
-//			//			calIntent.setType("vnd.android.cursor.item/event");
-//			//			calIntent.putExtra(Events.ORGANIZER, "Kadiwa");
-//			//			startActivity(calIntent);
-//
-//			Intent intent = new Intent(getActivity(), AddEvent.class);
-//			//startActivityForResult(intent, 2);
-//			startActivityForResult(intent, 2);
-//			return true;
-//		default:
-//			break;
-//		}
-//
-//		return false;
 //	}
 
 	@Override

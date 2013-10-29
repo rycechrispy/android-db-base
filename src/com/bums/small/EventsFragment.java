@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 
 public class EventsFragment extends Fragment {
 	private FragmentTabHost mTabHost;
-	private int the_tab;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -47,30 +46,30 @@ public class EventsFragment extends Fragment {
 		return mTabHost;
 	}
 	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == 2) {
-			if(resultCode == MainActivity.RESULT_OK){ 
-				EventList d = null;
-				if (the_tab == 0) 
-					d = ((EventList) getChildFragmentManager().findFragmentByTag("cfo"));
-				else if (the_tab == 1) 
-					d = ((EventList) getChildFragmentManager().findFragmentByTag("los"));
-				else if (the_tab == 2) 
-					d = ((EventList) getChildFragmentManager().findFragmentByTag("ws"));
-				
-				d.setEventData(
-						new EventData(data.getStringExtra("title"), data.getStringExtra("location"), 
-								data.getStringExtra("description"), data.getStringExtra("date_from"), 
-								data.getStringExtra("date_to"), data.getStringExtra("time_from"), 
-								data.getStringExtra("time_to"), data.getStringExtra("organization")));
-				d.addEventSync();
-			} 
-			if (resultCode == MainActivity.RESULT_CANCELED) {    
-				//Write your code if there's no result
-			}
-		}
-	}
+//	@Override
+//	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//		if (requestCode == 2) {
+//			if(resultCode == MainActivity.RESULT_OK){ 
+//				EventList d = null;
+//				if (the_tab == 0) 
+//					d = ((EventList) getChildFragmentManager().findFragmentByTag("cfo"));
+//				else if (the_tab == 1) 
+//					d = ((EventList) getChildFragmentManager().findFragmentByTag("los"));
+//				else if (the_tab == 2) 
+//					d = ((EventList) getChildFragmentManager().findFragmentByTag("ws"));
+//				
+//				d.setEventData(
+//						new EventData(data.getStringExtra("title"), data.getStringExtra("location"), 
+//								data.getStringExtra("description"), data.getStringExtra("date_from"), 
+//								data.getStringExtra("date_to"), data.getStringExtra("time_from"), 
+//								data.getStringExtra("time_to"), data.getStringExtra("organization")));
+//				d.addEventSync();
+//			} 
+//			if (resultCode == MainActivity.RESULT_CANCELED) {    
+//				//Write your code if there's no result
+//			}
+//		}
+//	}
 	
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -93,7 +92,7 @@ public class EventsFragment extends Fragment {
 
 			Intent intent = new Intent(getActivity(), AddEvent.class);
 			//startActivityForResult(intent, 2);
-			startActivityForResult(intent, 2);
+			getActivity().startActivityForResult(intent, 2);
 			return true;
 		default:
 			break;
@@ -106,13 +105,5 @@ public class EventsFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onActivityCreated(savedInstanceState);
-	}
-
-	public int getTab() {
-		return the_tab;
-	}
-
-	public void setTab(int the_tab) {
-		this.the_tab = the_tab;
 	}
 }

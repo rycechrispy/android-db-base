@@ -1,6 +1,7 @@
 package com.bums.small;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -83,16 +84,19 @@ public class EventList extends ListFragment {
 				String value = getArguments().getString("key");
 				if (value.equals("Christian Family Organization")) {
 					the_tab = CFO;
-					((EventsFragment) getParentFragment()).setTab(CFO);
+					//((EventsFragment) getParentFragment()).setTab(CFO);
+					((MainActivity) getActivity()).setTab(CFO);
 					new GetEvents().execute();
 					//load cfo
 				} else if(value.equals("Light of Salvation")) {
 					the_tab = LOS;
-					((EventsFragment) getParentFragment()).setTab(LOS);
+					//((EventsFragment) getParentFragment()).setTab(LOS);
+					((MainActivity) getActivity()).setTab(LOS);
 					new GetEvents().execute();
 				} else if (value.equals("Worship Service")) {
 					the_tab = WS;
-					((EventsFragment) getParentFragment()).setTab(WS);
+					((MainActivity) getActivity()).setTab(WS);
+					//((EventsFragment) getParentFragment()).setTab(WS);
 					new GetEvents().execute();
 				}
 			} catch (Exception e) {
@@ -171,6 +175,7 @@ public class EventList extends ListFragment {
 							EventData event = eventDataList.get(i);
 							eAdapter.addEvent(event);
 						}
+						Collections.sort(eventDataList);
 
 						Toast.makeText(getActivity().getApplicationContext(),
 								"Successfully retrieved events", Toast.LENGTH_SHORT).show();
@@ -216,6 +221,9 @@ public class EventList extends ListFragment {
 						else if (eventData.getDepartment().equals("Worship Service") && the_tab == WS)
 							eAdapter.addEvent(eventData);
 						
+						eventDataList.add(eventData);
+						Collections.sort(eventDataList);
+						
 						Toast.makeText(getActivity().getApplicationContext(),
 								"Successfully added an event", Toast.LENGTH_SHORT).show();
 
@@ -249,11 +257,8 @@ public class EventList extends ListFragment {
 
 		public void addEvent(EventData data) {
 			eData.add(data); //can get the organization by calling getOrganization
+			Collections.sort(eData);
 			notifyDataSetChanged();
-		}
-
-		public void removeOffice(int position) {
-
 		}
 
 		@Override
@@ -290,8 +295,8 @@ public class EventList extends ListFragment {
 			holder.organization.setImageResource(eData.get(position).getImage());
 			holder.title.setText(eData.get(position).getTitle());
 			holder.location.setText(eData.get(position).getLocation());
-			holder.date.setText(eData.get(position).getDate());
-			holder.time.setText(eData.get(position).getTime());
+			holder.date.setText(eData.get(position).getRegularDateFrom());
+			holder.time.setText(eData.get(position).getRegularTimeFrom());
 
 			return convertView;
 		}
@@ -318,23 +323,6 @@ public class EventList extends ListFragment {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View v, int position,
 					long id) {
-//				int type = eAdapter.getPosition();
-//				switch (type) {
-//				case TYPE_ADDOFFICE:
-//					Intent intent1 = new Intent(getActivity(), ChooseOffice.class);
-//					startActivityForResult(intent1, 1);
-//					break;
-//				case TYPE_DEPARTMENT:
-//					Intent intent = new Intent(getActivity(), ChooseDepartment.class);
-//					startActivityForResult(intent, 1);
-//					break;
-//				case TYPE_D_DETAILS: 
-//					mAdapter.removeDepartment(position);
-//					break;
-//				case TYPE_O_DETAILS: 
-//					mAdapter.removeOffice(position);
-//					break;
-//				}
 				
 				Intent intent = new Intent(getActivity(), EventDetails.class);
 				intent.putExtra("the_event", eventDataList.get(position));
