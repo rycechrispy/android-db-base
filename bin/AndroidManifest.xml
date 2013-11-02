@@ -30,28 +30,29 @@
             android:name="Main"
             android:label="Learn2Crack USER PANEL" >
         </activity>
-        <activity
-            android:name="MainActivity">
+        <activity android:name="MainActivity" >
         </activity>
-        <activity
-            android:name="ChooseDepartment">
+        <activity android:name="ChooseDepartment" >
         </activity>
-        <activity
-            android:name="ChooseOffice">
+        <activity android:name="ChooseOffice" >
         </activity>
-        <activity
-            android:name="AddEvent">
+        <activity android:name="AddEvent" >
         </activity>
-        <activity
-            android:name="EventDetails">
+        <activity android:name="EventDetails" >
         </activity>
-        
-        <activity
-            android:name="EditEvent">
+        <activity android:name="EditEvent" >
         </activity>
+
+        <service
+            android:name=".EventAlarmService"
+            android:enabled="true" />
+
+        <receiver android:name=".Reciever" />
     </application>
     <!-- Allow to connect with internet and to know the current network state -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
 </manifest>

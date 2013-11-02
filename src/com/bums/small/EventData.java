@@ -3,6 +3,7 @@ package com.bums.small;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import android.text.format.DateFormat;
@@ -185,6 +186,30 @@ public class EventData implements Serializable, Comparable<Object> {
 
 	public void setDepartment(String department) {
 		this.department = department;
+	}
+	
+	public long getBeginTime() {
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat inputFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		try {
+			cal.setTime(inputFormatter.parse(dateFrom + " " + timeFrom));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return cal.getTimeInMillis();
+	}
+	
+	public long getEndTime() {
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat inputFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		try {
+			cal.setTime(inputFormatter.parse(dateTo + " " + timeTo));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return cal.getTimeInMillis();
 	}
 
 	public String sqlDateToRegularDate(String strDate) {

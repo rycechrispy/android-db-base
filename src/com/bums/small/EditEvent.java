@@ -4,12 +4,15 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -23,6 +26,7 @@ import android.widget.SpinnerAdapter;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class EditEvent extends FragmentActivity implements OnItemSelectedListener {
 	private Calendar myCalendar;
 
@@ -49,6 +53,7 @@ public class EditEvent extends FragmentActivity implements OnItemSelectedListene
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.event_edit);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		Spinner spinner = (Spinner) findViewById(R.id.dropdown);
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -291,6 +296,17 @@ public class EditEvent extends FragmentActivity implements OnItemSelectedListene
 	        }
 	    }
 	}
+	
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case android.R.id.home:
+        	finish();
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
 	
 	private String updateLabelSQL(String date) {
 		String myFormat = "yyyy-MM-dd"; //In which you need put here

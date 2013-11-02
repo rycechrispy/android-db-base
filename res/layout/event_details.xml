@@ -96,16 +96,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1.27"
-            android:text="Back" >
+            android:text="Add To Calendar" >
         </Button>
-
+        
+        <Button
+            android:id="@+id/btn2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.27"
+            android:text="Add Reminder" >
+        </Button>
+		<!--  
         <CheckBox
             android:id="@+id/checkBox1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
             android:layout_weight="0.60"
-            android:text="Remind me" />
+            android:text="Remind me" /> -->
     </LinearLayout>
 
 </LinearLayout>

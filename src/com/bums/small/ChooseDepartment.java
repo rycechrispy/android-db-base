@@ -1,14 +1,18 @@
 package com.bums.small;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class ChooseDepartment extends FragmentActivity {
 
 	String[] departments;
@@ -18,6 +22,7 @@ public class ChooseDepartment extends FragmentActivity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.office);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		populateList();
 
@@ -44,6 +49,17 @@ public class ChooseDepartment extends FragmentActivity {
 		});
 
 	}
+	
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case android.R.id.home:
+        	finish();
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
 	
 	private String getDepartment(String group) {
 		String theGroup = "";
