@@ -147,11 +147,11 @@ public class AccountList extends ListFragment {
 				int type = mAdapter.getPosition().get(position);
 				switch (type) {
 				case TYPE_ADDOFFICE:
-					Intent intent2 = new Intent(getActivity(), ChooseOffice.class);
+					Intent intent2 = new Intent(getActivity(), AddOfficeActivity.class);
 					getActivity().startActivityForResult(intent2, 3);
 					break;
 				case TYPE_DEPARTMENT:
-					Intent intent = new Intent(getActivity(), ChooseDepartment.class);
+					Intent intent = new Intent(getActivity(), AddDepartmentActivity.class);
 					startActivityForResult(intent, 3);
 					break;
 				case TYPE_D_DETAILS: 

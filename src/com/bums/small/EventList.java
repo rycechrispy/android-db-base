@@ -324,7 +324,7 @@ public class EventList extends ListFragment {
 			public void onItemClick(AdapterView<?> parent, View v, int position,
 					long id) {
 				
-				Intent intent = new Intent(getActivity(), EventDetails.class);
+				Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
 				intent.putExtra("the_event", eventDataList.get(position));
 				startActivity(intent);
 				

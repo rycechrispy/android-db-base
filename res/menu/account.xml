@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
-        android:id="@+id/action_overflow"
-        android:icon="@drawable/ic_action_overflow"
+        android:id="@+id/signout"
+        android:icon="@drawable/ic_signout"
         android:showAsAction="always"
-        android:title="@string/action_overflow"/>
+        android:title="Signout"/>
 
 </menu>

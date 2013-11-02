@@ -1,7 +1,7 @@
 package com.bums.small;
 
-import com.bums.library.DatabaseHandler;
-
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,7 +12,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+
+import com.bums.library.UserFunctions;
 
 
 public class AccountFragment extends Fragment {
@@ -43,34 +44,43 @@ public class AccountFragment extends Fragment {
 				.setIndicator("My Events"), AccountEvent.class, b);
 		return mTabHost;
 	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.signout:
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setMessage("Are you sure you want to sign out?")
+			.setPositiveButton("No", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.dismiss();
+				}
+			})
+			.setNegativeButton("Yes", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					UserFunctions logout = new UserFunctions();
+					logout.logoutUser(getActivity().getApplicationContext());
+					Intent login = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
+					login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					startActivity(login);
+					getActivity().finish();
+				}
+			});
+			builder.create().show();
+			return true;
+		default:
+			break;
+		}
 
-//	@Override
-//	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//		if (requestCode == 1) {
-//			if(resultCode == MainActivity.RESULT_OK){ 
-//				AccountEvent d = null;
-//				d = ((AccountEvent) getChildFragmentManager().findFragmentByTag("accountevents"));
-//				String updateOrDelete = data.getStringExtra("update_or_delete");
-//				d.setPosition(data.getIntExtra("position", 0));
-//				if (updateOrDelete.equals("delete")) {
-//					d.setTitle(data.getStringExtra("title"));
-//					d.deleteEventSync();
-//				} else {
-//					d.setEventData(
-//							new EventData(data.getStringExtra("title"), data.getStringExtra("location"), 
-//									data.getStringExtra("description"), data.getStringExtra("date_from"), 
-//									data.getStringExtra("date_to"), data.getStringExtra("time_from"), 
-//									data.getStringExtra("time_to"), data.getStringExtra("organization")));
-//					d.setPrevTitle(data.getStringExtra("prevTitle"));
-//					d.updateEventSync();
-//				}
-//			} 
-//			if (resultCode == MainActivity.RESULT_CANCELED) {    
-//				//Write your code if there's no result
-//			}
-//		}
-//	}
+		return false;
+	}
 
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.account, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub

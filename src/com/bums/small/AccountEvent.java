@@ -338,7 +338,7 @@ public class AccountEvent extends ListFragment {
 			public void onItemClick(AdapterView<?> parent, View v, int position,
 					long id) {
 
-				Intent intent = new Intent(getActivity(), EditEvent.class);
+				Intent intent = new Intent(getActivity(), EditEventActivity.class);
 				intent.putExtra("the_event", eventDataList.get(position));
 				intent.putExtra("position", position);
 				getActivity().startActivityForResult(intent, 1);

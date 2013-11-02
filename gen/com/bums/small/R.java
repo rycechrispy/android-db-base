@@ -44,16 +44,17 @@ public final class R {
         public static final int ic_next_item=0x7f020011;
         public static final int ic_remove=0x7f020012;
         public static final int ic_replay=0x7f020013;
-        public static final int image_bg=0x7f020014;
-        public static final int kadiwa=0x7f020015;
-        public static final int list_selector=0x7f020016;
-        public static final int los=0x7f020017;
-        public static final int overseer=0x7f020018;
-        public static final int progress=0x7f020019;
-        public static final int rihanna=0x7f02001a;
-        public static final int scan=0x7f02001b;
-        public static final int secretary=0x7f02001c;
-        public static final int ws=0x7f02001d;
+        public static final int ic_signout=0x7f020014;
+        public static final int image_bg=0x7f020015;
+        public static final int kadiwa=0x7f020016;
+        public static final int list_selector=0x7f020017;
+        public static final int los=0x7f020018;
+        public static final int overseer=0x7f020019;
+        public static final int progress=0x7f02001a;
+        public static final int rihanna=0x7f02001b;
+        public static final int scan=0x7f02001c;
+        public static final int secretary=0x7f02001d;
+        public static final int ws=0x7f02001e;
     }
     public static final class id {
         public static final int TextView01=0x7f090023;
@@ -63,7 +64,6 @@ public final class R {
         public static final int action_add=0x7f090031;
         public static final int action_back=0x7f090035;
         public static final int action_forward=0x7f090032;
-        public static final int action_overflow=0x7f090030;
         public static final int action_refresh=0x7f090033;
         public static final int add=0x7f090000;
         public static final int bktologin=0x7f09002e;
@@ -101,6 +101,7 @@ public final class R {
         public static final int realtabcontent=0x7f090001;
         public static final int register=0x7f090026;
         public static final int scrollview=0x7f090009;
+        public static final int signout=0x7f090030;
         public static final int text=0x7f09001e;
         public static final int textView1=0x7f090011;
         public static final int textwelcome=0x7f090027;

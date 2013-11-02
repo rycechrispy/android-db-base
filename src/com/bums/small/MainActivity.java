@@ -38,12 +38,12 @@ public class MainActivity extends FragmentActivity {
 		b = new Bundle();
 		b.putString("key", "Events");
 		mTabHost.addTab(mTabHost.newTabSpec("events")
-				.setIndicator("events"), EventsFragment.class, b);
+				.setIndicator("events"), EventFragment.class, b);
 
 		b = new Bundle();
 		b.putString("key", "incmedia");
 		mTabHost.addTab(mTabHost.newTabSpec("incmedia").setIndicator("incmedia"),
-				INCMediaFragment.class, b);
+				WebsiteFragment.class, b);
 
 		b = new Bundle();
 		b.putString("key", "Account");
@@ -66,8 +66,8 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	public void onBackPressed() {
 		Fragment webview = getSupportFragmentManager().findFragmentByTag("incmedia");
-		if (webview instanceof INCMediaFragment) {
-			WebView w = ((INCMediaFragment)webview).getWebView();
+		if (webview instanceof WebsiteFragment) {
+			WebView w = ((WebsiteFragment)webview).getWebView();
 			if (w.canGoBack())
 				w.goBack();
 			else
@@ -103,8 +103,8 @@ public class MainActivity extends FragmentActivity {
 			} 
 		} else if (requestCode == 2) { //adding events
 			if(resultCode == MainActivity.RESULT_OK){ 
-				EventsFragment e = null;
-				e = ((EventsFragment) getSupportFragmentManager().findFragmentByTag("events"));
+				EventFragment e = null;
+				e = ((EventFragment) getSupportFragmentManager().findFragmentByTag("events"));
 				EventList d = null;
 				if (the_tab == 0) 
 					d = ((EventList) e.getChildFragmentManager().findFragmentByTag("cfo"));
