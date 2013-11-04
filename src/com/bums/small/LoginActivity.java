@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,6 +36,7 @@ public class LoginActivity extends Activity {
 
 	private ProgressDialog nDialog;
 	private AlertDialog.Builder builder;
+	private HashMap<String, String> user;
 	/**
 	 * Called when the activity is first created.
 	 */
@@ -47,10 +49,17 @@ public class LoginActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		//if shared preferences has stuff in it (eg not null) then start, else wait for user login details
-		//NetAsync(view)
+		//check to see if the person already logged in, if so log him in
+		DatabaseHandler db = new DatabaseHandler(getApplicationContext());
+		user = new HashMap<String, String>();
+		user = db.getUserDetails();
 		
-		//else {
+		if (!user.isEmpty()) {
+			Intent upanel = new Intent(getApplicationContext(), MainActivity.class);
+			upanel.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(upanel);
+		}
+		
 
 		setContentView(R.layout.login);
 

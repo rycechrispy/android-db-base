@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Small</string>
+    <string name="app_name">INCConnect</string>
     <string name="action_settings">Settings</string>
     <string name="action_overflow">Overflow</string>
     <string name="action_accept">Accept</string>

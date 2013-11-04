@@ -1,5 +1,9 @@
 package com.bums.small;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -9,6 +13,8 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -86,18 +92,18 @@ public class EventList extends ListFragment {
 					the_tab = CFO;
 					//((EventsFragment) getParentFragment()).setTab(CFO);
 					((MainActivity) getActivity()).setTab(CFO);
-					new GetEvents().execute();
+					new NetCheck().execute();
 					//load cfo
 				} else if(value.equals("Light of Salvation")) {
 					the_tab = LOS;
 					//((EventsFragment) getParentFragment()).setTab(LOS);
 					((MainActivity) getActivity()).setTab(LOS);
-					new GetEvents().execute();
+					new NetCheck().execute();
 				} else if (value.equals("Worship Service")) {
 					the_tab = WS;
 					((MainActivity) getActivity()).setTab(WS);
 					//((EventsFragment) getParentFragment()).setTab(WS);
-					new GetEvents().execute();
+					new NetCheck().execute();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -214,11 +220,17 @@ public class EventList extends ListFragment {
 					String red = json.getString(KEY_ERROR);
 
 					if(Integer.parseInt(res) == 1) {
-						if (eventData.getDepartment().equals("Christian Family Organization") && the_tab == CFO)
+						if (eventData.getDepartment().equals("Christian Family Organization") 
+								|| eventData.getDepartment().equals("All Officers") 
+								&& the_tab == CFO)
 							eAdapter.addEvent(eventData);
-						else if (eventData.getDepartment().equals("Light of Salvation") && the_tab == LOS)
+						else if (eventData.getDepartment().equals("Light of Salvation")
+								|| eventData.getDepartment().equals("All Officers") 
+								&& the_tab == LOS)
 							eAdapter.addEvent(eventData);
-						else if (eventData.getDepartment().equals("Worship Service") && the_tab == WS)
+						else if (eventData.getDepartment().equals("Worship Service") 
+								|| eventData.getDepartment().equals("All Officers") 
+								&& the_tab == WS)
 							eAdapter.addEvent(eventData);
 						
 						eventDataList.add(eventData);
@@ -343,6 +355,59 @@ public class EventList extends ListFragment {
 
 			}
 		});
+	}
+	
+	/**
+	 * Async Task to check whether internet connection is working.
+	 **/
+	private class NetCheck extends AsyncTask<String,String,Boolean>
+	{
+		@Override
+		protected void onPreExecute(){
+			super.onPreExecute();
+			bar = (ProgressBar) v.findViewById(R.id.progressBar);
+			bar.setVisibility(View.VISIBLE);
+		}
+		/**
+		 * Gets current device state and checks for working internet connection by trying Google.
+		 **/
+		@Override
+		protected Boolean doInBackground(String... args){
+			ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo netInfo = cm.getActiveNetworkInfo();
+			if (netInfo != null && netInfo.isConnected()) {
+				try {
+					URL url = new URL("http://www.google.com");
+					HttpURLConnection urlc = (HttpURLConnection) url.openConnection();
+					urlc.setConnectTimeout(3000);
+					urlc.connect();
+					if (urlc.getResponseCode() == 200) {
+						return true;
+					}
+				} catch (MalformedURLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			return false;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean th){
+			if(th == true){
+				new GetEvents().execute();
+			}
+			else{
+				Toast.makeText(getActivity().getApplicationContext(),
+						"Network Error Connection", Toast.LENGTH_SHORT).show();
+				
+				bar = (ProgressBar) v.findViewById(R.id.progressBar);
+				bar.setVisibility(View.INVISIBLE);
+			}
+		}
 	}
 
 }

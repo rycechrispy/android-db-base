@@ -67,19 +67,23 @@ public class EventData implements Serializable, Comparable<Object> {
 			setImage(R.drawable.cfo);
 		else if (organization.equals(WS))
 			setImage(R.drawable.ws);
+		else if (organization.equals("All Officers"))
+			setImage(R.drawable.all);
 
 		setDepartment(getDepartment(organization));
 	}
 
 	private String getDepartment(String group) {
 		String theGroup = "";
-		if (group.equals("Buklod") || group.equals("Kadiwa") || group.equals("Binhi")) 
+		if (group.equals("Buklod") || group.equals("Kadiwa") || group.equals("Binhi") || group.equals(CFO)) 
 			theGroup = "Christian Family Organization"; 
 		else if (group.equals("Overseer") || group.equals("Choir") || group.equals("Finance") 
 				|| group.equals("SCAN-I") || group.equals("Secretary") || group.equals("Leadership") || group.equals(WS)) 
 			theGroup = "Worship Service";
 		else if (group.equals("Missionizer") || group.equals(LOS))
 			theGroup = "Light of Salvation";
+		else 
+			theGroup = "All Officers";
 
 		return theGroup;
 	}

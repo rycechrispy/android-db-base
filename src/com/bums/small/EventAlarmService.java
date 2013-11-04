@@ -37,7 +37,7 @@ public class EventAlarmService extends Service {
 		
 		NotificationCompat.Builder mBuilder =
 		        new NotificationCompat.Builder(this)
-		        .setSmallIcon(R.drawable.ic_launcher)
+		        .setSmallIcon(e.getImage())
 		        .setContentTitle(e.getTitle())
 		        .setContentText(e.getRegularDateFrom() + " " + e.getRegularTimeFrom() + " at " + e.getLocation());
 		// Creates an explicit intent for an Activity in your app

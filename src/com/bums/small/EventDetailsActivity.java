@@ -54,7 +54,10 @@ public class EventDetailsActivity extends FragmentActivity {
 
 		title.setText(event.getTitle());
 		organization.setText(event.getOrganization());
-		department.setText(event.getDepartment());
+		if (event.getOrganization().equals(event.getDepartment()))
+			department.setText("");
+		else
+			department.setText(event.getDepartment());
 		location.setText(event.getLocation());
 		if (event.getDateFrom().equals(event.getDateTo())) 
 			date.setText(event.getRegularDateFrom());
