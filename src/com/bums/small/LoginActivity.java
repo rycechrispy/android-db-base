@@ -48,18 +48,19 @@ public class LoginActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		//check to see if the person already logged in, if so log him in
 		DatabaseHandler db = new DatabaseHandler(getApplicationContext());
 		user = new HashMap<String, String>();
 		user = db.getUserDetails();
-		
+
 		if (!user.isEmpty()) {
 			Intent upanel = new Intent(getApplicationContext(), MainActivity.class);
 			upanel.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(upanel);
+			finish();
 		}
-		
+
 
 		setContentView(R.layout.login);
 
@@ -81,26 +82,17 @@ public class LoginActivity extends Activity {
 		 * A Toast is set to alert when the Email and Password field is empty
 		 **/
 		btnLogin.setOnClickListener(new View.OnClickListener() {
-
 			@Override
 			public void onClick(View view) {
-
-				if (  ( !inputUsername.getText().toString().equals("")) && ( !inputPassword.getText().toString().equals("")) )
-				{
+				if ((!inputUsername.getText().toString().equals("")) && (!inputPassword.getText().toString().equals(""))) {
 					NetAsync(view);
-				}
-				else if ( ( !inputUsername.getText().toString().equals("")) )
-				{
+				} else if ((!inputUsername.getText().toString().equals(""))) {
 					Toast.makeText(getApplicationContext(),
 							"Password field empty", Toast.LENGTH_SHORT).show();
-				}
-				else if ( ( !inputPassword.getText().toString().equals("")) )
-				{
+				} else if ((!inputPassword.getText().toString().equals(""))) {
 					Toast.makeText(getApplicationContext(),
 							"Email field empty", Toast.LENGTH_SHORT).show();
-				}
-				else
-				{
+				} else {
 					Toast.makeText(getApplicationContext(),
 							"Email and Password field are empty", Toast.LENGTH_SHORT).show();
 				}
